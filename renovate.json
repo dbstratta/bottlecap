@@ -1,0 +1,7 @@
+{
+  "automerge": "minor",
+  "semanticCommits": true,
+  "labels": ["renovate"],
+  "assignees": ["@strattadb"],
+  "reviewers": ["@strattadb"]
+}

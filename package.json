@@ -1,28 +1,48 @@
 {
   "name": "bottlecap",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "repository": "git@github.com:strattadb/bottlecap.git",
   "author": "Diego Stratta <strattadb@gmail.com>",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "nodemon --exec babel-node src/index.ts"
+    "start": "nodemon --exec babel-node --extensions \".ts\" src/index.ts",
+    "build": "babel src --out-dir dist --ignore spec.ts,test.ts",
+    "test": "jest",
+    "test:watch": "jest --onlyChanged",
+    "prebuild": "tsc && yarn clean",
+    "clean": "rimraf dist",
+    "typecheck": "tsc"
   },
   "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.51",
     "@babel/core": "^7.0.0-beta.51",
     "@babel/node": "^7.0.0-beta.51",
     "@babel/preset-env": "^7.0.0-beta.51",
     "@babel/preset-typescript": "^7.0.0-beta.51",
-    "eslint": "^4.19.1",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.12.0",
-    "eslint-plugin-typescript": "^0.12.0",
+    "@playlyfe/gql": "^2.6.0",
+    "@types/graphql": "^0.13.1",
+    "@types/jest": "^23.1.0",
+    "@types/node": "^10.3.3",
+    "@types/ramda": "^0.25.33",
+    "babel-jest": "^23.0.1",
+    "husky": "^1.0.0-rc.9",
+    "jest": "^23.1.0",
+    "lint-staged": "^7.2.0",
     "nodemon": "^1.17.5",
+    "rimraf": "^2.6.2",
+    "tslint": "^5.10.0",
+    "tslint-config-airbnb": "^5.9.2",
+    "tslint-config-prettier": "^1.13.0",
     "typescript": "^2.9.2",
     "typescript-eslint-parser": "^16.0.0"
   },
   "dependencies": {
-    "prettier": "^1.13.5"
+    "apollo-server": "^2.0.0-rc.0",
+    "graphql": "^0.13.2",
+    "prettier": "^1.13.5",
+    "ramda": "^0.25.0",
+    "winston": "^3.0.0"
   }
 }
