@@ -8,15 +8,20 @@ services:
   - docker
 
 stages:
+  - lint
   - test
   - name: deploy
     if: branch = master
 
 jobs:
   include:
+    - stage: lint
+      node_js: "10"
+      script: ./scripts/ci/lint
+
     - stage: test
       node_js: "10"
-      script: ./scripts/test
+      script: ./scripts/ci/test
 
     - stage: deploy
-      script: ./scripts/deploy "${TRAVIS_COMMIT::12}"
+      script: ./scripts/ci/deploy "${TRAVIS_COMMIT::12}"

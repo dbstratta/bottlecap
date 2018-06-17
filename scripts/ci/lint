@@ -11,8 +11,6 @@ readonly __file="${__dir}/$(basename "${__script_path}")"
 readonly __base="$(basename "${__file}" .sh)"
 readonly __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
-readonly image_name="bottlecap_test"
-
 lint_commit_msg() {
     yarn commitlint-travis
 }
@@ -23,25 +21,8 @@ lint() {
     yarn lint:ci
 }
 
-build_docker_image() {
-    docker build --file dev.dockerfile \
-         --tag "${image_name}" \
-         "${__root}"
-}
-
-test() {
-    docker run \
-        --rm "${image_name}" \
-        -e CI \
-        -e CODECOV_TOKEN \
-        yarn test:ci
-}
-
 main() {
     lint
-
-    build_docker_image
-    test
 }
 
 main
