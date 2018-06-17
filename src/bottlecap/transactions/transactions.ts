@@ -1,16 +1,8 @@
 import { createHash } from 'crypto';
 
-// @ts-ignore
 import { ec as EC } from 'elliptic';
-import { compose, find, join, map, toString } from 'ramda';
 
-import {
-  Transaction,
-  TxIn,
-  TxOut,
-  UnsignedTxIn,
-  UnspentTxOut,
-} from './transaction';
+import { TxOut, UnsignedTxIn, UnspentTxOut } from './transaction';
 
 const ec = new EC('secp256k1');
 
@@ -28,22 +20,22 @@ export const getTransactionId = (
     .digest('hex');
 };
 
-const getHashableDataFromUnsignedTxIns: (
+const getHashableDataFromUnsignedTxIns = (
   unsignedTxIns: UnsignedTxIn[],
-) => string = compose(
-  join(''),
-  map(
-    (unsignedTxIn: UnsignedTxIn) =>
-      unsignedTxIn.txOutId + toString(unsignedTxIn.txOutIndex),
-  ),
-);
+): string =>
+  unsignedTxIns.reduce(
+    (acc, unsignedTxIn) =>
+      acc + unsignedTxIn.txOutId + unsignedTxIn.txOutIndex.toString(),
+    '',
+  );
 
-const getHashableDataFromTxOuts: (txOuts: TxOut[]) => string = compose(
-  join(''),
-  map((txOut: TxOut) => txOut.address + toString(txOut.amount)),
-);
+const getHashableDataFromTxOuts = (txOuts: TxOut[]): string =>
+  txOuts.reduce(
+    (acc, txOut) => acc + txOut.address + txOut.amount.toString(),
+    '',
+  );
 
-const signTxIn = (
+export const signTxIn = (
   unsignedTxIn: UnsignedTxIn,
   txId: string,
   privateKey: string,
@@ -79,5 +71,5 @@ const getUnspentTxOut = (
   const pred = (unspentTxOut: UnspentTxOut) =>
     unspentTxOut.txOutId === txOutId && unspentTxOut.txOutIndex === txOutIndex;
 
-  return find(pred, unspentTxOuts);
+  return unspentTxOuts.find(pred);
 };

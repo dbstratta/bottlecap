@@ -1,5 +1,3 @@
-import { dec, findLast, inc, last } from 'ramda';
-
 import {
   Block,
   EXPECTED_TIME_BETWEEN_BLOCKS,
@@ -37,21 +35,24 @@ const getAdjustedDifficulty = (blockchain: Blockchain): number => {
 };
 
 const getLatestBlock = (blockchain: Blockchain): Block =>
-  last(blockchain) as Block;
+  blockchain[blockchain.length - 1];
 
 const getPrevDifficultyAdjustmentBlock = (blockchain: Blockchain): Block =>
-  findLast(isDifficultyAdjustmentBlock, blockchain) as Block;
+  blockchain
+    .slice()
+    .reverse()
+    .find(isDifficultyAdjustmentBlock) as Block;
 
 const doGetAdjustedDifficulty = (
   timeBetweenBlocks: number,
   prevDifficultyAdjustmentBlock: Block,
 ): number => {
   if (tookTooLong(timeBetweenBlocks)) {
-    return inc(prevDifficultyAdjustmentBlock.difficulty);
+    return prevDifficultyAdjustmentBlock.difficulty + 1;
   }
 
   if (tookTooLittle(timeBetweenBlocks)) {
-    return dec(prevDifficultyAdjustmentBlock.difficulty);
+    return prevDifficultyAdjustmentBlock.difficulty - 1;
   }
 
   return prevDifficultyAdjustmentBlock.difficulty;

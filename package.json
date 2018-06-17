@@ -6,7 +6,6 @@
   "scripts": {
     "start": "nodemon --exec babel-node --extensions \".ts,.tsx\" src/index.ts",
     "build": "babel src --out-dir dist --ignore spec.ts,test.ts",
-    "typecheck": "tsc",
     "lint": "tslint --project . --fix",
     "lint:ci": "prettier --list-different src/**/* && tslint --project .",
     "test": "jest",
@@ -14,7 +13,8 @@
     "test:watch": "jest --onlyChanged",
     "posttest:ci": "yarn coverage",
     "coverage": "codecov",
-    "prebuild": "tsc && yarn clean",
+    "prebuild": "yarn typecheck && yarn clean",
+    "typecheck": "tsc",
     "clean": "rimraf dist",
     "commit": "commit"
   },
@@ -48,7 +48,6 @@
     "@types/graphql": "^0.13.1",
     "@types/jest": "^23.1.0",
     "@types/node": "^10.3.3",
-    "@types/ramda": "^0.25.33",
     "babel-jest": "^23.0.1",
     "codecov": "^3.0.2",
     "husky": "^1.0.0-rc.9",
@@ -56,6 +55,7 @@
     "lint-staged": "^7.2.0",
     "markdownlint-cli": "^0.10.0",
     "nodemon": "^1.17.5",
+    "prettier": "^1.13.5",
     "rimraf": "^2.6.2",
     "tslint": "^5.10.0",
     "tslint-config-airbnb": "^5.9.2",
@@ -66,8 +66,6 @@
     "apollo-server": "^2.0.0-rc.0",
     "elliptic": "^6.4.0",
     "graphql": "^0.13.2",
-    "prettier": "^1.13.5",
-    "ramda": "^0.25.0",
     "winston": "^3.0.0"
   },
   "resolutions": {
