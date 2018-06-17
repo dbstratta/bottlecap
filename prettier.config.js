@@ -1,10 +1,10 @@
 module.exports = {
   singleQuote: true,
-  trailingComas: 'all',
+  trailingComma: 'all',
   overrides: [
     {
       files: '*.json',
-      options: { trailingComas: 'none' },
+      options: { trailingComma: 'none' },
     },
   ],
 };

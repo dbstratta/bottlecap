@@ -1,0 +1,21 @@
+sudo: required
+
+language: node
+node_js:
+  - "10"
+
+services:
+  - docker
+
+stages:
+  - test
+  - name: deploy
+    if: branch = master
+
+jobs:
+  include:
+    - stage: test
+      script: ./scripts/test
+
+    - stage: deploy
+      script: ./scripts/deploy "${TRAVIS_COMMIT::12}"

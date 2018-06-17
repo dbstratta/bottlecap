@@ -1,28 +1,83 @@
 import { createHash } from 'crypto';
 
-import { compose, join, map, toString } from 'ramda';
+// @ts-ignore
+import { ec as EC } from 'elliptic';
+import { compose, find, join, map, toString } from 'ramda';
 
-import { Transaction, TxIn, TxOut } from './transaction';
+import {
+  Transaction,
+  TxIn,
+  TxOut,
+  UnsignedTxIn,
+  UnspentTxOut,
+} from './transaction';
 
-export const getTransactionId = (transaction: Transaction): string => {
-  const hashableDataFromTxIns: string = getHashableDataFromTxIns(
-    transaction.txIns,
+const ec = new EC('secp256k1');
+
+export const getTransactionId = (
+  unsignedTxIns: UnsignedTxIn[],
+  txOuts: TxOut[],
+): string => {
+  const hashableDataFromTxIns: string = getHashableDataFromUnsignedTxIns(
+    unsignedTxIns,
   );
-  const hashableDataFromTxOuts: string = getHashableDataFromTxOuts(
-    transaction.txOuts,
-  );
+  const hashableDataFromTxOuts: string = getHashableDataFromTxOuts(txOuts);
 
   return createHash('sha256')
     .update(hashableDataFromTxIns + hashableDataFromTxOuts)
     .digest('hex');
 };
 
-const getHashableDataFromTxIns: (txIns: TxIn[]) => string = compose(
+const getHashableDataFromUnsignedTxIns: (
+  unsignedTxIns: UnsignedTxIn[],
+) => string = compose(
   join(''),
-  map((txIn: TxIn) => txIn.txOutId + toString(txIn.txOutIndex)),
+  map(
+    (unsignedTxIn: UnsignedTxIn) =>
+      unsignedTxIn.txOutId + toString(unsignedTxIn.txOutIndex),
+  ),
 );
 
 const getHashableDataFromTxOuts: (txOuts: TxOut[]) => string = compose(
   join(''),
   map((txOut: TxOut) => txOut.address + toString(txOut.amount)),
 );
+
+const signTxIn = (
+  unsignedTxIn: UnsignedTxIn,
+  txId: string,
+  privateKey: string,
+  unspentTxOuts: UnspentTxOut[],
+): string | null => {
+  const referencedUnspentTxOut: UnspentTxOut | undefined = getUnspentTxOut(
+    unsignedTxIn.txOutId,
+    unsignedTxIn.txOutIndex,
+    unspentTxOuts,
+  );
+
+  if (!referencedUnspentTxOut) {
+    return null;
+  }
+
+  const { address: referencedAddress } = referencedUnspentTxOut;
+  const key = ec.keyFromPrivate(privateKey, 'hex');
+  const publicKey: string = key.getPublic().encode('hex');
+
+  if (publicKey !== referencedAddress) {
+    return null;
+  }
+
+  const signature: string = key.sign(txId).toDER('hex');
+  return signature;
+};
+
+const getUnspentTxOut = (
+  txOutId: string,
+  txOutIndex: number,
+  unspentTxOuts: UnspentTxOut[],
+): UnspentTxOut | undefined => {
+  const pred = (unspentTxOut: UnspentTxOut) =>
+    unspentTxOut.txOutId === txOutId && unspentTxOut.txOutIndex === txOutIndex;
+
+  return find(pred, unspentTxOuts);
+};

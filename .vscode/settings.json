@@ -1,7 +1,7 @@
 {
   "tslint.autoFixOnSave": true,
   "tslint.configFile": "tslint.json",
-  "tslint.jsEnable": true,
+  "tslint.jsEnable": false,
   "tslint.packageManager": "yarn",
   "javascript.suggestionActions.enabled": false
 }

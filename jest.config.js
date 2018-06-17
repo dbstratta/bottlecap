@@ -1,8 +1,8 @@
 module.exports = {
-  collectCoverage: true,
+  collectCoverage: process.env.CI,
   coverageDirectory: 'coverage',
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
-  setupFiles: ['./jest.setup.js'],
+  setupFiles: ['./src/jest.setup.ts'],
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
   },

@@ -24,4 +24,4 @@ RUN yarn install && \
 
 COPY --from=builder /usr/src/app/dist/ dist
 
-RUN node index.js
+CMD ["node", "index.js"]

@@ -76,5 +76,5 @@ export const hashBlock = ({
 export const isDifficultyAdjustmentBlock = (block: Block): boolean =>
   mathMod(block.index, BLOCK_GENERATION_INTERVAL) === 0 && block.index !== 0;
 
-export const getMsBetweenBlocks = (block1: Block, block2: Block): number =>
+export const getTimeBetweenBlocks = (block1: Block, block2: Block): number =>
   block1.timestamp - block2.timestamp;

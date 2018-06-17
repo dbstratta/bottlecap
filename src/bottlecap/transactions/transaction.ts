@@ -1,3 +1,9 @@
+export type Transaction = {
+  id: string;
+  txIns: TxIn[];
+  txOuts: TxOut[];
+};
+
 export type TxIn = {
   txOutId: string;
   txOutIndex: number;
@@ -9,8 +15,14 @@ export type TxOut = {
   amount: number;
 };
 
-export type Transaction = {
-  id: string;
-  txIns: TxIn[];
-  txOuts: TxOut[];
+export type UnsignedTxIn = {
+  txOutId: string;
+  txOutIndex: number;
+};
+
+export type UnspentTxOut = {
+  txOutId: string;
+  txOutIndex: number;
+  address: string;
+  amount: number;
 };

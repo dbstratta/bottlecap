@@ -11,6 +11,6 @@ export {
   getGenesisBlock,
   hashBlock,
   isDifficultyAdjustmentBlock,
-  getMsBetweenBlocks,
+  getTimeBetweenBlocks,
 } from './blocks';
 export { isNewBlockValid, isBlockStructureValid } from './validators';
