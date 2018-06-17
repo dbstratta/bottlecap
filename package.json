@@ -12,7 +12,7 @@
     "test": "jest",
     "test:ci": "yarn test --coverage",
     "test:watch": "jest --onlyChanged",
-    "posttest:ci": "coverage",
+    "posttest:ci": "yarn coverage",
     "coverage": "codecov",
     "prebuild": "tsc && yarn clean",
     "clean": "rimraf dist",
