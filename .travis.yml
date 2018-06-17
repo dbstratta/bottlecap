@@ -1,8 +1,7 @@
 sudo: required
 
-language: node
-node_js:
-  - "10"
+language: node_js
+node_js: "10"
 
 services:
   - docker
@@ -16,13 +15,9 @@ stages:
 jobs:
   include:
     - stage: lint
-      before_install: ./scripts/ci/before_install
-      install: ./scripts/ci/install
       script: ./scripts/ci/lint
 
     - stage: test
-      before_install: ./scripts/ci/before_install
-      install: ./scripts/ci/install
       script: ./scripts/ci/test
 
     - stage: deploy
