@@ -1,4 +1,4 @@
-FROM node:10.4.1 AS builder
+FROM node:10.4.1@sha256:2cda73dd26369c2ec69130ddda6f83ff4980fd6fc8e73b5e670a7670d4c86ba0 AS builder
 
 ENV NODE_ENV=${NODE_ENV:-production}
 
@@ -13,7 +13,7 @@ COPY . .
 
 RUN yarn build
 
-FROM node:10.4.1
+FROM node:10.4.1@sha256:2cda73dd26369c2ec69130ddda6f83ff4980fd6fc8e73b5e670a7670d4c86ba0
 
 WORKDIR /usr/src/app
 
