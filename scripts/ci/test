@@ -21,10 +21,10 @@ build_docker_image() {
 
 run_tests() {
     docker run \
-        --rm "${image_name}" \
+        --rm \
         -e CI \
         -e CODECOV_TOKEN \
-        yarn test:ci
+        "${image_name}" yarn test:ci
 }
 
 main() {
