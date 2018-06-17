@@ -14,7 +14,7 @@ readonly __root="$(cd "$(dirname "${__dir}")" && pwd)"
 readonly image_name="bottlecap_test"
 
 lint_commit_msg() {
-    commitlint-travis
+    yarn commitlint-travis
 }
 
 lint() {
