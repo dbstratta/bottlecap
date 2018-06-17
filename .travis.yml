@@ -17,10 +17,14 @@ jobs:
   include:
     - stage: lint
       node_js: "10"
+      before_install: ./scripts/ci/before_install
+      install: ./scripts/ci/install
       script: ./scripts/ci/lint
 
     - stage: test
       node_js: "10"
+      before_install: ./scripts/ci/before_install
+      install: ./scripts/ci/install
       script: ./scripts/ci/test
 
     - stage: deploy

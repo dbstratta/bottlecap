@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+[[ "${DEBUG:-false}" == "true" ]] && set -o xtrace
+
+readonly __script_path="${BASH_SOURCE[0]}"
+readonly __dir="$(cd "$(dirname "${__script_path}")" && pwd)"
+readonly __file="${__dir}/$(basename "${__script_path}")"
+readonly __base="$(basename "${__file}" .sh)"
+readonly __root="$(cd "$(dirname "${__dir}")" && pwd)"
+
+main() {
+    sudo apt-key adv --fetch-keys http://dl.yarnpkg.com/debian/pubkey.gpg
+    echo "deb http://dl.yarnpkg.com/debian/ stable main" | \
+        sudo tee /etc/apt/sources.list.d/yarn.list
+    sudo apt-get update -qq
+    sudo apt-get install -y -qq yarn
+}
+
+main
