@@ -4,15 +4,15 @@ module.exports = api => {
   return {
     presets: [
       [
-        "@babel/preset-env",
+        '@babel/preset-env',
         {
           targets: {
-            node: "current"
+            node: 'current',
           },
-          debug: babelEnv == "development"
-        }
+          debug: babelEnv === 'development',
+        },
       ],
-      "@babel/preset-typescript"
-    ]
+      '@babel/preset-typescript',
+    ],
   };
 };

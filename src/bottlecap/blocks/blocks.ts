@@ -1,6 +1,4 @@
-import { always, mathMod } from 'ramda';
-
-import { Block, BLOCK_GENERATION_INTERVAL, Nonce } from './block';
+import { Block, DIFFICULTY_ADJUSMENT_INTERVAL, Nonce } from './block';
 import {
   hashString,
   nonceGenerator,
@@ -52,7 +50,7 @@ const genesisBlock = findBlock({
   timestamp: Date.now(),
 });
 
-export const getGenesisBlock: () => Block = always(genesisBlock);
+export const getGenesisBlock: () => Block = () => genesisBlock;
 
 export const hashBlock = ({
   index,
@@ -74,7 +72,7 @@ export const hashBlock = ({
   );
 
 export const isDifficultyAdjustmentBlock = (block: Block): boolean =>
-  mathMod(block.index, BLOCK_GENERATION_INTERVAL) === 0 && block.index !== 0;
+  block.index % DIFFICULTY_ADJUSMENT_INTERVAL === 0 && block.index !== 0;
 
 export const getTimeBetweenBlocks = (block1: Block, block2: Block): number =>
   block1.timestamp - block2.timestamp;

@@ -21,4 +21,4 @@ jobs:
       script: ./scripts/ci/test
 
     - stage: deploy
-      script: ./scripts/ci/deploy "${TRAVIS_COMMIT::12}"
+      script: ./scripts/ci/deploy

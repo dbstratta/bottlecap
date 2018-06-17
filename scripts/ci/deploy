@@ -11,7 +11,7 @@ readonly __file="${__dir}/$(basename "${__script_path}")"
 readonly __base="$(basename "${__file}")"
 readonly __root="$(cd "$(dirname "$(dirname "${__dir}")")" && pwd)"
 
-readonly commit_hash="${1}"
+readonly commit_hash="${TRAVIS_COMMIT::12}"
 readonly image_name="strattadb/bottlecap"
 readonly image_tag="${commit_hash}"
 

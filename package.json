@@ -10,7 +10,7 @@
     "lint": "tslint --project . --fix",
     "lint:ci": "prettier --list-different src/**/* && tslint --project .",
     "test": "jest",
-    "test:ci": "yarn test",
+    "test:ci": "yarn test --coverage",
     "test:watch": "jest --onlyChanged",
     "posttest:ci": "coverage",
     "coverage": "codecov",
@@ -69,6 +69,9 @@
     "prettier": "^1.13.5",
     "ramda": "^0.25.0",
     "winston": "^3.0.0"
+  },
+  "resolutions": {
+    "babel-core": "^7.0.0-bridge.0"
   },
   "engines": {
     "node": ">= 10.0.0"

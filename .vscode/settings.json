@@ -3,5 +3,7 @@
   "tslint.configFile": "tslint.json",
   "tslint.jsEnable": false,
   "tslint.packageManager": "yarn",
-  "javascript.suggestionActions.enabled": false
+  "javascript.suggestionActions.enabled": false,
+  "jest.autoEnable": false,
+  "jest.enableCodeLens": false
 }

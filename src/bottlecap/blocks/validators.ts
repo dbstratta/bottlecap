@@ -1,6 +1,5 @@
-import { startsWith } from 'ramda';
-
 import { Block, Nonce } from './block';
+import { hexToBinary } from './helpers';
 
 export const isNewBlockValid = (
   newBlock: Block,
@@ -56,10 +55,10 @@ export const hashMatchesDifficulty = (
   hash: string,
   difficulty: number,
 ): boolean => {
-  const binaryHash = parseInt(hash, 16).toString(2);
+  const binaryHash = hexToBinary(hash);
   const requiredPrefix = '0'.repeat(difficulty);
 
-  return startsWith(requiredPrefix, binaryHash);
+  return binaryHash.startsWith(requiredPrefix);
 };
 
 const isNewBlockTimestampValid = (newBlock: Block, prevBlock: Block): boolean =>
