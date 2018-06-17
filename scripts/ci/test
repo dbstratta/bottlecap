@@ -16,7 +16,7 @@ readonly image_name="bottlecap_test"
 build_docker_image() {
     docker build --file dev.dockerfile \
          --tag "${image_name}" \
-         "${__root}"
+         .
 }
 
 run_tests() {
