@@ -1,10 +1,10 @@
 import { Block, DIFFICULTY_ADJUSMENT_INTERVAL, Nonce } from './block';
 import {
+  hashMatchesDifficulty,
   hashString,
   nonceGenerator,
   stringifyHashableBlockData,
 } from './helpers';
-import { hashMatchesDifficulty } from './validations';
 
 type FindBlockArgs = {
   index: number;

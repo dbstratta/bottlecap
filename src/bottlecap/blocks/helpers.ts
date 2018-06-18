@@ -54,3 +54,13 @@ export const hexToBinary = (data: string): string =>
         acc.concat(hexToBinaryLookupTable[hexDigit]),
       '',
     );
+
+export const hashMatchesDifficulty = (
+  hash: string,
+  difficulty: number,
+): boolean => {
+  const binaryHash = hexToBinary(hash);
+  const requiredPrefix = '0'.repeat(difficulty);
+
+  return binaryHash.startsWith(requiredPrefix);
+};

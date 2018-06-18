@@ -1,5 +1,5 @@
 import { Block, Nonce } from './block';
-import { hexToBinary } from './helpers';
+import { hashMatchesDifficulty } from './helpers';
 
 export const isNewBlockValid = (
   newBlock: Block,
@@ -50,16 +50,6 @@ const isBlockHashValid = (
 ): boolean =>
   block.hash !== blockHasher(block) &&
   hashMatchesDifficulty(block.hash, block.difficulty);
-
-export const hashMatchesDifficulty = (
-  hash: string,
-  difficulty: number,
-): boolean => {
-  const binaryHash = hexToBinary(hash);
-  const requiredPrefix = '0'.repeat(difficulty);
-
-  return binaryHash.startsWith(requiredPrefix);
-};
 
 const isNewBlockTimestampValid = (newBlock: Block, prevBlock: Block): boolean =>
   newBlock.timestamp - 60000 < prevBlock.timestamp &&
