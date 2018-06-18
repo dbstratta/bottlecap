@@ -8,7 +8,7 @@ export {
 
 export {
   findBlock,
-  getGenesisBlock,
+  genesisBlock,
   hashBlock,
   isDifficultyAdjustmentBlock,
   getTimeBetweenBlocks,
