@@ -7,7 +7,8 @@
     "start": "nodemon --exec babel-node --extensions \".ts,.tsx\" src/index.ts",
     "build": "babel src --out-dir dist --ignore spec.ts,test.ts",
     "lint": "tslint --project . --fix",
-    "lint:ci": "prettier --list-different src/**/* && tslint --project .",
+    "lint:ci": "yarn commitlint-travis && yarn lint:shell && prettier --list-different src/**/* && tslint --project .",
+    "lint:shell": "shellcheck scripts/**/*.sh",
     "test": "jest",
     "test:ci": "yarn test --coverage",
     "test:watch": "jest --onlyChanged",
@@ -30,7 +31,8 @@
   },
   "keywords": [
     "cryptocurrency",
-    "blockchain"
+    "blockchain",
+    "bottlecap"
   ],
   "license": "MIT",
   "private": true,
@@ -68,10 +70,7 @@
     "graphql": "^0.13.2",
     "winston": "^3.0.0"
   },
-  "resolutions": {
-    "babel-core": "^7.0.0-bridge.0"
-  },
   "engines": {
-    "node": ">= 10.0.0"
+    "node": ">= 10.4.0"
   }
 }

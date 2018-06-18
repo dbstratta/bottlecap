@@ -5,24 +5,16 @@ export type Transaction = {
 };
 
 export type TxIn = {
-  txOutId: string;
-  txOutIndex: number;
+  prevOutPoint: OutPoint;
   signature: string;
 };
 
+export type OutPoint = {
+  txId: string;
+  txOutIndex: number;
+};
+
 export type TxOut = {
-  address: string;
-  amount: number;
-};
-
-export type UnsignedTxIn = {
-  txOutId: string;
-  txOutIndex: number;
-};
-
-export type UnspentTxOut = {
-  txOutId: string;
-  txOutIndex: number;
   address: string;
   amount: number;
 };

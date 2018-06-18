@@ -2,74 +2,74 @@ import { createHash } from 'crypto';
 
 import { ec as EC } from 'elliptic';
 
-import { TxOut, UnsignedTxIn, UnspentTxOut } from './transaction';
+import { OutPoint, Transaction, TxOut } from './transaction';
 
 const ec = new EC('secp256k1');
 
 export const getTransactionId = (
-  unsignedTxIns: UnsignedTxIn[],
+  prevOutPoints: OutPoint[],
   txOuts: TxOut[],
 ): string => {
-  const hashableDataFromTxIns: string = getHashableDataFromUnsignedTxIns(
-    unsignedTxIns,
+  const hashableStringFromPrevOutPoints: string = getHashableStringFromOutPoints(
+    prevOutPoints,
   );
-  const hashableDataFromTxOuts: string = getHashableDataFromTxOuts(txOuts);
+  const hashableStringFromTxOuts: string = getHashableStringFromTxOuts(txOuts);
+  const stringToHash =
+    hashableStringFromPrevOutPoints + hashableStringFromTxOuts;
 
   return createHash('sha256')
-    .update(hashableDataFromTxIns + hashableDataFromTxOuts)
+    .update(stringToHash)
     .digest('hex');
 };
 
-const getHashableDataFromUnsignedTxIns = (
-  unsignedTxIns: UnsignedTxIn[],
-): string =>
-  unsignedTxIns.reduce(
-    (acc, unsignedTxIn) =>
-      acc + unsignedTxIn.txOutId + unsignedTxIn.txOutIndex.toString(),
+const getHashableStringFromOutPoints = (outPoints: OutPoint[]): string =>
+  outPoints.reduce(
+    (acc, outPoint) => acc + outPoint.txId + outPoint.txOutIndex.toString(),
     '',
   );
 
-const getHashableDataFromTxOuts = (txOuts: TxOut[]): string =>
+const getHashableStringFromTxOuts = (txOuts: TxOut[]): string =>
   txOuts.reduce(
     (acc, txOut) => acc + txOut.address + txOut.amount.toString(),
     '',
   );
 
 export const signTxIn = (
-  unsignedTxIn: UnsignedTxIn,
-  txId: string,
+  prevOutPoint: OutPoint,
   privateKey: string,
-  unspentTxOuts: UnspentTxOut[],
-): string | null => {
-  const referencedUnspentTxOut: UnspentTxOut | undefined = getUnspentTxOut(
-    unsignedTxIn.txOutId,
-    unsignedTxIn.txOutIndex,
-    unspentTxOuts,
-  );
-
-  if (!referencedUnspentTxOut) {
-    return null;
-  }
-
-  const { address: referencedAddress } = referencedUnspentTxOut;
+): string => {
   const key = ec.keyFromPrivate(privateKey, 'hex');
-  const publicKey: string = key.getPublic().encode('hex');
 
-  if (publicKey !== referencedAddress) {
-    return null;
-  }
-
-  const signature: string = key.sign(txId).toDER('hex');
+  const signature: string = key.sign(prevOutPoint.txId).toDER('hex');
   return signature;
 };
 
-const getUnspentTxOut = (
-  txOutId: string,
-  txOutIndex: number,
-  unspentTxOuts: UnspentTxOut[],
-): UnspentTxOut | undefined => {
-  const pred = (unspentTxOut: UnspentTxOut) =>
-    unspentTxOut.txOutId === txOutId && unspentTxOut.txOutIndex === txOutIndex;
+export const getUnspentOutPoints = (
+  transactions: Transaction[],
+  oldUnspentOutPoints: OutPoint[],
+): OutPoint[] => {
+  const newUnspentOutPoints = getNewUnspentOutPoints(transactions);
+  const spentOutPoints = getNewSpentOutPoints(transactions);
 
-  return unspentTxOuts.find(pred);
+  const isOutPointSpent = (outPoint: OutPoint) =>
+    spentOutPoints.includes(outPoint);
+
+  return oldUnspentOutPoints
+    .filter(isOutPointSpent)
+    .concat(newUnspentOutPoints);
 };
+
+const getNewUnspentOutPoints = (transactions: Transaction[]): OutPoint[] =>
+  transactions.flatMap(transaction =>
+    transaction.txOuts.map(
+      (txOut, index: number): OutPoint => ({
+        txId: transaction.id,
+        txOutIndex: index,
+      }),
+    ),
+  );
+
+const getNewSpentOutPoints = (transactions: Transaction[]): OutPoint[] =>
+  transactions
+    .flatMap(transaction => transaction.txIns)
+    .map(txIn => txIn.prevOutPoint);

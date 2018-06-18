@@ -11,18 +11,8 @@ readonly __file="${__dir}/$(basename "${__script_path}")"
 readonly __base="$(basename "${__file}")"
 readonly __root="$(cd "$(dirname "$(dirname "${__dir}")")" && pwd)"
 
-lint_commit_msg() {
-    yarn commitlint-travis
-}
-
-lint() {
-    lint_commit_msg
-
-    yarn lint:ci
-}
-
 main() {
-    lint
+    yarn lint:ci
 }
 
 main

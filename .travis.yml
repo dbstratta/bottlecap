@@ -15,10 +15,10 @@ stages:
 jobs:
   include:
     - stage: lint
-      script: ./scripts/ci/lint
+      script: ./scripts/ci/lint.sh
 
     - stage: test
-      script: ./scripts/ci/test
+      script: ./scripts/ci/test.sh
 
     - stage: deploy
-      script: ./scripts/ci/deploy
+      script: ./scripts/ci/deploy.sh
