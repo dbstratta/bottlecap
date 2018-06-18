@@ -18,3 +18,9 @@ export type TxOut = {
   address: string;
   amount: number;
 };
+
+export type UnspentTxOut = {
+  outPoint: OutPoint;
+  address: string;
+  amount: number;
+};

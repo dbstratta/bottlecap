@@ -50,6 +50,7 @@
     "@types/graphql": "^0.13.1",
     "@types/jest": "^23.1.0",
     "@types/node": "^10.3.3",
+    "babel-core": "^7.0.0-0",
     "babel-jest": "^23.0.1",
     "codecov": "^3.0.2",
     "husky": "^1.0.0-rc.9",
@@ -65,10 +66,15 @@
     "typescript": "^2.9.2"
   },
   "dependencies": {
+    "@types/ramda": "^0.25.33",
     "apollo-server": "^2.0.0-rc.0",
     "elliptic": "^6.4.0",
     "graphql": "^0.13.2",
+    "ramda": "^0.25.0",
     "winston": "^3.0.0"
+  },
+  "resolutions": {
+    "babel-core": "^7.0.0-bridge.0"
   },
   "engines": {
     "node": ">= 10.4.0"

@@ -4,7 +4,7 @@ import {
   nonceGenerator,
   stringifyHashableBlockData,
 } from './helpers';
-import { hashMatchesDifficulty } from './validators';
+import { hashMatchesDifficulty } from './validations';
 
 type FindBlockArgs = {
   index: number;
@@ -42,15 +42,13 @@ export const findBlock = ({
   }
 };
 
-const genesisBlock = findBlock({
+export const genesisBlock = findBlock({
   index: 0,
   data: 'TBD',
   prevHash: '',
   difficulty: 1,
   timestamp: Date.now(),
 });
-
-export const getGenesisBlock: () => Block = () => genesisBlock;
 
 export const hashBlock = ({
   index,

@@ -1,8 +1,9 @@
 import { createHash } from 'crypto';
 
 import { ec as EC } from 'elliptic';
+import { equals } from 'ramda';
 
-import { OutPoint, Transaction, TxOut } from './transaction';
+import { OutPoint, Transaction, TxOut, UnspentTxOut } from './transaction';
 
 const ec = new EC('secp256k1');
 
@@ -44,32 +45,34 @@ export const signTxIn = (
   return signature;
 };
 
-export const getUnspentOutPoints = (
+export const getNewUnspentTxOuts = (
   transactions: Transaction[],
-  oldUnspentOutPoints: OutPoint[],
-): OutPoint[] => {
-  const newUnspentOutPoints = getNewUnspentOutPoints(transactions);
-  const spentOutPoints = getNewSpentOutPoints(transactions);
+  oldUnspentTxOuts: UnspentTxOut[],
+): UnspentTxOut[] => {
+  const newUnspentTxOuts = getUnspentTxOuts(transactions);
+  const spentOutPoints = getSpentOutPoints(transactions);
 
-  const isOutPointSpent = (outPoint: OutPoint) =>
-    spentOutPoints.includes(outPoint);
+  const isUnspentTxOutSpent = (unspentTxOut: UnspentTxOut) =>
+    !!spentOutPoints.find(equals(unspentTxOut.outPoint));
 
-  return oldUnspentOutPoints
-    .filter(isOutPointSpent)
-    .concat(newUnspentOutPoints);
+  return oldUnspentTxOuts.filter(isUnspentTxOutSpent).concat(newUnspentTxOuts);
 };
 
-const getNewUnspentOutPoints = (transactions: Transaction[]): OutPoint[] =>
+const getUnspentTxOuts = (transactions: Transaction[]): UnspentTxOut[] =>
   transactions.flatMap(transaction =>
     transaction.txOuts.map(
-      (txOut, index: number): OutPoint => ({
-        txId: transaction.id,
-        txOutIndex: index,
+      (txOut, index: number): UnspentTxOut => ({
+        outPoint: {
+          txId: transaction.id,
+          txOutIndex: index,
+        },
+        address: txOut.address,
+        amount: txOut.amount,
       }),
     ),
   );
 
-const getNewSpentOutPoints = (transactions: Transaction[]): OutPoint[] =>
+const getSpentOutPoints = (transactions: Transaction[]): OutPoint[] =>
   transactions
     .flatMap(transaction => transaction.txIns)
     .map(txIn => txIn.prevOutPoint);

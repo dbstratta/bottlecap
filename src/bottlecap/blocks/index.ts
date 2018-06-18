@@ -13,4 +13,4 @@ export {
   isDifficultyAdjustmentBlock,
   getTimeBetweenBlocks,
 } from './blocks';
-export { isNewBlockValid, isBlockStructureValid } from './validators';
+export { isNewBlockValid, isBlockStructureValid } from './validations';
