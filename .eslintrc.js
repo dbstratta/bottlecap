@@ -1,21 +1,21 @@
 module.exports = {
   root: true,
-  parser: "typescript-eslint-parser",
+  parser: 'babel-eslint',
   parserOptions: {
     ecmaVersion: 2018,
-    sourceType: "module"
+    sourceType: 'module',
   },
 
-  plugins: ["typescript"],
+  plugins: ['prettier'],
 
   env: {
-    es6: true
+    es6: true,
   },
 
-  extends: ["eslint:recommended", "airbnb-base"],
+  extends: ['eslint:recommended', 'airbnb-base'],
 
   rules: {
-    "import/no-named-as-default": "off",
-    "import/no-extraneous-dependencies": "off"
-  }
+    'import/no-named-as-default': 'off',
+    'import/no-extraneous-dependencies': 'off',
+  },
 };
