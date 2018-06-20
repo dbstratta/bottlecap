@@ -7,5 +7,6 @@
   "jest.autoEnable": false,
   "jest.enableCodeLens": false,
   "eslint.autoFixOnSave": true,
-  "prettier.eslintIntegration": false
+  "prettier.eslintIntegration": false,
+  "typescript.updateImportsOnFileMove.enabled": "always"
 }

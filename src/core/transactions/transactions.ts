@@ -1,6 +1,6 @@
 import { equals } from 'ramda';
 
-import { sign } from '../ellipticCurveCrypto';
+import { PrivateKey, sign } from '../ellipticCurveCrypto';
 import { sha256 } from '../helpers';
 import {
   CoinbaseTransaction,
@@ -46,8 +46,10 @@ const getHashableStringFromTxOuts = (txOuts: TxOut[]): string =>
     '',
   );
 
-export const signTxIn = (prevOutPoint: OutPoint, privateKey: string): string =>
-  sign(privateKey, prevOutPoint.txId);
+export const signTxIn = (
+  prevOutPoint: OutPoint,
+  privateKey: PrivateKey,
+): string => sign(privateKey, prevOutPoint.txId);
 
 export const getNewUnspentTxOuts = (
   coinbaseTransaction: CoinbaseTransaction,
@@ -93,19 +95,24 @@ const getUnspentTxOutFromCoinbaseTransaction = (
 
 const getUnspentTxOutsFromRegularTransactions = (
   transactions: Transaction[],
+): UnspentTxOut[] => transactions.flatMap(mapTransactionToUnspentTxOuts);
+
+const mapTransactionToUnspentTxOuts = (
+  transaction: Transaction,
 ): UnspentTxOut[] =>
-  transactions.flatMap(transaction =>
-    transaction.txOuts.map(
-      (txOut, index: number): UnspentTxOut => ({
-        outPoint: {
-          txId: transaction.id,
-          txOutIndex: index,
-        },
-        address: txOut.address,
-        amount: txOut.amount,
-      }),
-    ),
-  );
+  transaction.txOuts.map(mapTxOutToUnspentTxOut(transaction));
+
+const mapTxOutToUnspentTxOut = (transaction: Transaction) => (
+  txOut: TxOut,
+  index: number,
+): UnspentTxOut => ({
+  outPoint: {
+    txId: transaction.id,
+    txOutIndex: index,
+  },
+  address: txOut.address,
+  amount: txOut.amount,
+});
 
 const getSpentOutPoints = (transactions: Transaction[]): OutPoint[] =>
   transactions

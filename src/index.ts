@@ -1,3 +1,3 @@
-import { main } from './bottlecap_web/server';
+import { main } from './server/server';
 
 main();

@@ -1,6 +1,6 @@
 import { ApolloServer } from 'apollo-server';
 
-import logger from '../bottlecap/logger';
+import logger from '../core/logger';
 import { resolvers, typeDefs } from './schema';
 
 const server = new ApolloServer({ typeDefs, resolvers });

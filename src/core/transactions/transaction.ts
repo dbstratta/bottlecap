@@ -1,3 +1,5 @@
+import { PublicKey } from '../ellipticCurveCrypto';
+
 export type Transaction = {
   id: string;
   txIns: TxIn[];
@@ -15,13 +17,13 @@ export type OutPoint = {
 };
 
 export type TxOut = {
-  address: string;
+  address: PublicKey;
   amount: number;
 };
 
 export type UnspentTxOut = {
   outPoint: OutPoint;
-  address: string;
+  address: PublicKey;
   amount: number;
 };
 

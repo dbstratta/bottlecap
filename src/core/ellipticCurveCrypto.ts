@@ -5,7 +5,9 @@ export type PublicKey = string;
 
 const ec = new EC('secp256k1');
 
-export const publicKeyFromPrivateKey = (privateKey: PrivateKey): PublicKey => {
+export const getPublicKeyFromPrivateKey = (
+  privateKey: PrivateKey,
+): PublicKey => {
   const key = ec.keyFromPrivate(privateKey, 'hex');
 
   return key.getPublic().encode('hex');
@@ -20,7 +22,7 @@ export const generatePrivateKey = (): PrivateKey => {
 
 export const sign = (
   privateKey: PrivateKey,
-  data: string | number[],
+  data: string,
   encoding: string = 'hex',
 ): string => {
   const key = ec.keyFromPrivate(privateKey, 'hex');
@@ -32,7 +34,7 @@ export const sign = (
 export const verify = (
   publicKey: PublicKey,
   signature: string,
-  data: string | number[],
+  data: string,
 ): boolean => {
   const key = ec.keyFromPublic(publicKey, 'hex');
 

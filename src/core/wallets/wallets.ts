@@ -2,9 +2,9 @@ import { promises as fs } from 'fs';
 
 import {
   generatePrivateKey,
+  getPublicKeyFromPrivateKey,
   PrivateKey,
   PublicKey,
-  publicKeyFromPrivateKey,
 } from '../ellipticCurveCrypto';
 import { UnspentTxOut } from '../transactions';
 import { Wallet } from '../wallets';
@@ -47,7 +47,7 @@ const persistWallet = (wallet: Wallet): Promise<void> =>
   fs.writeFile(PRIVATE_KEY_LOCATION, wallet.privateKey);
 
 export const getPublicKey = ({ privateKey }: Wallet): PublicKey =>
-  publicKeyFromPrivateKey(privateKey);
+  getPublicKeyFromPrivateKey(privateKey);
 
 export const getBalance = (
   address: PublicKey,
