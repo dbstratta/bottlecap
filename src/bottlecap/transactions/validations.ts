@@ -1,10 +1,13 @@
-import { ec as EC } from 'elliptic';
-
+import { verify } from '../ellipticCurveCrypto';
 import { getUnspentTxOut } from './helpers';
-import { Transaction, TxIn, UnspentTxOut } from './transaction';
-import { getTransactionId } from './transactions';
-
-const ec = new EC('secp256k1');
+import {
+  COINBASE_AMOUNT,
+  CoinbaseTransaction,
+  Transaction,
+  TxIn,
+  UnspentTxOut,
+} from './transaction';
+import { getCoinbaseTransactionId, getTransactionId } from './transactions';
 
 export const isTransactionValid = (
   transaction: Transaction,
@@ -34,7 +37,32 @@ export const isTxInValid = (
   }
 
   const { address } = referencedTxOut;
-  const key = ec.keyFromPublic(address, 'hex');
 
-  return key.verify(transaction.id, txIn.signature);
+  return verify(address, txIn.signature, transaction.id);
 };
+
+export const isCoinbaseTransactionValid = (
+  coinbaseTransaction: CoinbaseTransaction,
+  blockIndex: number,
+): boolean =>
+  isCoinbaseTransactionIdValid(coinbaseTransaction) &&
+  isCoinbaseTransactionAmountValid(coinbaseTransaction) &&
+  isCoinbaseTransactionBlockIndexValid(coinbaseTransaction, blockIndex);
+
+const isCoinbaseTransactionIdValid = (
+  coinbaseTransaction: CoinbaseTransaction,
+): boolean =>
+  coinbaseTransaction.id ===
+  getCoinbaseTransactionId(
+    coinbaseTransaction.blockIndex,
+    coinbaseTransaction.txOut,
+  );
+
+const isCoinbaseTransactionAmountValid = (
+  coinbaseTransaction: CoinbaseTransaction,
+): boolean => coinbaseTransaction.txOut.amount === COINBASE_AMOUNT;
+
+const isCoinbaseTransactionBlockIndexValid = (
+  coinbaseTransaction: CoinbaseTransaction,
+  blockIndex: number,
+): boolean => coinbaseTransaction.blockIndex === blockIndex;

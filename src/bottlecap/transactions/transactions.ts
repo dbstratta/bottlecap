@@ -1,11 +1,14 @@
-import { createHash } from 'crypto';
-
-import { ec as EC } from 'elliptic';
 import { equals } from 'ramda';
 
-import { OutPoint, Transaction, TxOut, UnspentTxOut } from './transaction';
-
-const ec = new EC('secp256k1');
+import { sign } from '../ellipticCurveCrypto';
+import { sha256 } from '../helpers';
+import {
+  CoinbaseTransaction,
+  OutPoint,
+  Transaction,
+  TxOut,
+  UnspentTxOut,
+} from './transaction';
 
 export const getTransactionId = (
   prevOutPoints: OutPoint[],
@@ -18,9 +21,17 @@ export const getTransactionId = (
   const stringToHash =
     hashableStringFromPrevOutPoints + hashableStringFromTxOuts;
 
-  return createHash('sha256')
-    .update(stringToHash)
-    .digest('hex');
+  return sha256(stringToHash);
+};
+
+export const getCoinbaseTransactionId = (
+  blockIndex: number,
+  txOut: TxOut,
+): string => {
+  const hashableStringFromTxOut: string = getHashableStringFromTxOuts([txOut]);
+  const stringToHash = blockIndex.toString() + hashableStringFromTxOut;
+
+  return sha256(stringToHash);
 };
 
 const getHashableStringFromOutPoints = (outPoints: OutPoint[]): string =>
@@ -35,21 +46,15 @@ const getHashableStringFromTxOuts = (txOuts: TxOut[]): string =>
     '',
   );
 
-export const signTxIn = (
-  prevOutPoint: OutPoint,
-  privateKey: string,
-): string => {
-  const key = ec.keyFromPrivate(privateKey, 'hex');
-
-  const signature: string = key.sign(prevOutPoint.txId).toDER('hex');
-  return signature;
-};
+export const signTxIn = (prevOutPoint: OutPoint, privateKey: string): string =>
+  sign(privateKey, prevOutPoint.txId);
 
 export const getNewUnspentTxOuts = (
+  coinbaseTransaction: CoinbaseTransaction,
   transactions: Transaction[],
   oldUnspentTxOuts: UnspentTxOut[],
 ): UnspentTxOut[] => {
-  const newUnspentTxOuts = getUnspentTxOuts(transactions);
+  const newUnspentTxOuts = getUnspentTxOuts(coinbaseTransaction, transactions);
   const spentOutPoints = getSpentOutPoints(transactions);
 
   const isUnspentTxOutSpent = (unspentTxOut: UnspentTxOut) =>
@@ -58,7 +63,37 @@ export const getNewUnspentTxOuts = (
   return oldUnspentTxOuts.filter(isUnspentTxOutSpent).concat(newUnspentTxOuts);
 };
 
-const getUnspentTxOuts = (transactions: Transaction[]): UnspentTxOut[] =>
+const getUnspentTxOuts = (
+  coinbaseTransaction: CoinbaseTransaction,
+  transactions: Transaction[],
+): UnspentTxOut[] => {
+  const unspentTxOutFromCoinbaseTransaction = getUnspentTxOutFromCoinbaseTransaction(
+    coinbaseTransaction,
+  );
+
+  const unspentTxOutsFromRegularTransactions = getUnspentTxOutsFromRegularTransactions(
+    transactions,
+  );
+
+  return [unspentTxOutFromCoinbaseTransaction].concat(
+    unspentTxOutsFromRegularTransactions,
+  );
+};
+
+const getUnspentTxOutFromCoinbaseTransaction = (
+  coinbaseTransaction: CoinbaseTransaction,
+): UnspentTxOut => ({
+  outPoint: {
+    txId: coinbaseTransaction.id,
+    txOutIndex: coinbaseTransaction.blockIndex,
+  },
+  amount: coinbaseTransaction.txOut.amount,
+  address: coinbaseTransaction.txOut.address,
+});
+
+const getUnspentTxOutsFromRegularTransactions = (
+  transactions: Transaction[],
+): UnspentTxOut[] =>
   transactions.flatMap(transaction =>
     transaction.txOuts.map(
       (txOut, index: number): UnspentTxOut => ({

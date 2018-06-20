@@ -24,3 +24,11 @@ export type UnspentTxOut = {
   address: string;
   amount: number;
 };
+
+export const COINBASE_AMOUNT = 10;
+
+export type CoinbaseTransaction = {
+  id: string;
+  blockIndex: number;
+  txOut: TxOut;
+};
