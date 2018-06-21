@@ -1,7 +1,6 @@
 import { equals } from 'ramda';
 
-import { PrivateKey, sign } from '../ellipticCurveCrypto';
-import { sha256 } from '../helpers';
+import { PrivateKey, PublicKey, sign } from '../ellipticCurveCrypto';
 import {
   CoinbaseTransaction,
   OutPoint,
@@ -9,42 +8,6 @@ import {
   TxOut,
   UnspentTxOut,
 } from './transaction';
-
-export const getTransactionId = (
-  prevOutPoints: OutPoint[],
-  txOuts: TxOut[],
-): string => {
-  const hashableStringFromPrevOutPoints: string = getHashableStringFromOutPoints(
-    prevOutPoints,
-  );
-  const hashableStringFromTxOuts: string = getHashableStringFromTxOuts(txOuts);
-  const stringToHash =
-    hashableStringFromPrevOutPoints + hashableStringFromTxOuts;
-
-  return sha256(stringToHash);
-};
-
-export const getCoinbaseTransactionId = (
-  blockIndex: number,
-  txOut: TxOut,
-): string => {
-  const hashableStringFromTxOut: string = getHashableStringFromTxOuts([txOut]);
-  const stringToHash = blockIndex.toString() + hashableStringFromTxOut;
-
-  return sha256(stringToHash);
-};
-
-const getHashableStringFromOutPoints = (outPoints: OutPoint[]): string =>
-  outPoints.reduce(
-    (acc, outPoint) => acc + outPoint.txId + outPoint.txOutIndex.toString(),
-    '',
-  );
-
-const getHashableStringFromTxOuts = (txOuts: TxOut[]): string =>
-  txOuts.reduce(
-    (acc, txOut) => acc + txOut.address + txOut.amount.toString(),
-    '',
-  );
 
 export const signTxIn = (
   prevOutPoint: OutPoint,
@@ -73,12 +36,12 @@ const getUnspentTxOuts = (
     coinbaseTransaction,
   );
 
-  const unspentTxOutsFromRegularTransactions = getUnspentTxOutsFromRegularTransactions(
+  const unspentTxOutsFromTransactions = getUnspentTxOutsFromTransactions(
     transactions,
   );
 
   return [unspentTxOutFromCoinbaseTransaction].concat(
-    unspentTxOutsFromRegularTransactions,
+    unspentTxOutsFromTransactions,
   );
 };
 
@@ -93,7 +56,7 @@ const getUnspentTxOutFromCoinbaseTransaction = (
   address: coinbaseTransaction.txOut.address,
 });
 
-const getUnspentTxOutsFromRegularTransactions = (
+const getUnspentTxOutsFromTransactions = (
   transactions: Transaction[],
 ): UnspentTxOut[] => transactions.flatMap(mapTransactionToUnspentTxOuts);
 
@@ -118,3 +81,12 @@ const getSpentOutPoints = (transactions: Transaction[]): OutPoint[] =>
   transactions
     .flatMap(transaction => transaction.txIns)
     .map(txIn => txIn.prevOutPoint);
+
+export const filterUnspentTxOutsByAddress = (
+  unspentTxOuts: UnspentTxOut[],
+  address: PublicKey,
+): UnspentTxOut[] => unspentTxOuts.filter(unspentTxOutBelongsToAdress(address));
+
+const unspentTxOutBelongsToAdress = (address: PublicKey) => (
+  unspentTxOut: UnspentTxOut,
+): boolean => unspentTxOut.address === address;

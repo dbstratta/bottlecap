@@ -1,18 +1,25 @@
-import { Block, Nonce } from './block';
+import {
+  isCoinbaseTransactionValid,
+  isTransactionValid,
+  UnspentTxOut,
+} from '../transactions';
+import { Block, BlockData, Nonce } from './block';
 import { hashMatchesDifficulty } from './helpers';
 
 export const isNewBlockValid = (
   newBlock: Block,
   prevBlock: Block,
+  unspentTxOuts: UnspentTxOut[],
   blockHasher: (block: Block) => string,
 ): boolean =>
-  isBlockStructureValid(newBlock) &&
+  isNewBlockStructureValid(newBlock) &&
   isNewBlockIndexValid(newBlock, prevBlock) &&
   isNewBlockPrevHashValid(newBlock, prevBlock) &&
-  isBlockHashValid(newBlock, blockHasher) &&
+  isNewBlockDataValid(newBlock, unspentTxOuts) &&
+  isNewBlockHashValid(newBlock, blockHasher) &&
   isNewBlockTimestampValid(newBlock, prevBlock);
 
-export const isBlockStructureValid = ({
+export const isNewBlockStructureValid = ({
   index,
   nonce,
   data,
@@ -31,7 +38,10 @@ const isIndexValid = (index: number): boolean => typeof index === 'number';
 
 const isNonceValid = (nonce: Nonce): boolean => typeof nonce === 'number';
 
-const isDataValid = (data: string): boolean => typeof data === 'string';
+const isDataValid = (data: BlockData): boolean =>
+  typeof data === 'object' &&
+  typeof data.coinbaseTransaction === 'object' &&
+  Array.isArray(data.transactions);
 
 const isHashValid = (hash: string): boolean => typeof hash === 'string';
 
@@ -44,7 +54,19 @@ const isNewBlockIndexValid = (newBlock: Block, prevBlock: Block): boolean =>
 const isNewBlockPrevHashValid = (newBlock: Block, prevBlock: Block): boolean =>
   newBlock.prevHash !== prevBlock.hash;
 
-const isBlockHashValid = (
+const isNewBlockDataValid = (
+  newBlock: Block,
+  unspentTxOuts: UnspentTxOut[],
+): boolean =>
+  isCoinbaseTransactionValid(
+    newBlock.data.coinbaseTransaction,
+    newBlock.index,
+  ) &&
+  newBlock.data.transactions.every(transaction =>
+    isTransactionValid(transaction, unspentTxOuts),
+  );
+
+const isNewBlockHashValid = (
   block: Block,
   blockHasher: (block: Block) => string,
 ): boolean =>

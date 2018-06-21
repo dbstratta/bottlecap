@@ -1,14 +1,19 @@
-import { Block, DIFFICULTY_ADJUSMENT_INTERVAL, Nonce } from './block';
+import { sha256 } from '../helpers';
+import {
+  Block,
+  BlockData,
+  DIFFICULTY_ADJUSMENT_INTERVAL,
+  Nonce,
+} from './block';
 import {
   hashMatchesDifficulty,
-  hashString,
   nonceGenerator,
-  stringifyHashableBlockData,
+  stringifyHashableBlockContent,
 } from './helpers';
 
 type FindBlockArgs = {
   index: number;
-  data: string;
+  data: BlockData;
   prevHash: string;
   timestamp: number;
   difficulty: number;
@@ -25,16 +30,16 @@ export const findBlock = ({
 
   while (true) {
     const nonce: Nonce = nonceIterator.next().value;
-    const hashableBlockData: string = stringifyHashableBlockData(
+    const hashableBlockContent: string = stringifyHashableBlockContent({
       index,
       nonce,
       data,
       prevHash,
       timestamp,
       difficulty,
-    );
+    });
 
-    const hash = hashString(hashableBlockData);
+    const hash = sha256(hashableBlockContent);
 
     if (hashMatchesDifficulty(hash, difficulty)) {
       return { index, nonce, data, prevHash, hash, timestamp, difficulty };
@@ -44,7 +49,14 @@ export const findBlock = ({
 
 export const genesisBlock = findBlock({
   index: 0,
-  data: 'TBD',
+  data: {
+    coinbaseTransaction: {
+      id: '',
+      blockIndex: 0,
+      txOut: { address: '', amount: 10 },
+    },
+    transactions: [],
+  },
   prevHash: '',
   difficulty: 1,
   timestamp: Date.now(),
@@ -58,15 +70,15 @@ export const hashBlock = ({
   timestamp,
   difficulty,
 }: Block): string =>
-  hashString(
-    stringifyHashableBlockData(
+  sha256(
+    stringifyHashableBlockContent({
       index,
       nonce,
       data,
       prevHash,
       timestamp,
       difficulty,
-    ),
+    }),
   );
 
 export const isDifficultyAdjustmentBlock = (block: Block): boolean =>

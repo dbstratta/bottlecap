@@ -1,5 +1,9 @@
 import { verify } from '../ellipticCurveCrypto';
-import { getUnspentTxOut } from './helpers';
+import {
+  getCoinbaseTransactionId,
+  getTransactionId,
+  getUnspentTxOut,
+} from './helpers';
 import {
   COINBASE_AMOUNT,
   CoinbaseTransaction,
@@ -7,7 +11,6 @@ import {
   TxIn,
   UnspentTxOut,
 } from './transaction';
-import { getCoinbaseTransactionId, getTransactionId } from './transactions';
 
 export const isTransactionValid = (
   transaction: Transaction,

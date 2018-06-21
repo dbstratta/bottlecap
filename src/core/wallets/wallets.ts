@@ -6,7 +6,16 @@ import {
   PrivateKey,
   PublicKey,
 } from '../ellipticCurveCrypto';
-import { UnspentTxOut } from '../transactions';
+import {
+  filterUnspentTxOutsByAddress,
+  getTransactionId,
+  OutPoint,
+  signTxIn,
+  Transaction,
+  TxIn,
+  TxOut,
+  UnspentTxOut,
+} from '../transactions';
 import { Wallet } from '../wallets';
 
 export const initWallet = async (): Promise<Wallet> => {
@@ -25,7 +34,7 @@ export const initWallet = async (): Promise<Wallet> => {
 const loadWalletIfExists = async (): Promise<Wallet | null> => {
   try {
     return loadWallet();
-  } catch (e) {
+  } catch {
     return null;
   }
 };
@@ -53,6 +62,77 @@ export const getBalance = (
   address: PublicKey,
   unspentTxOuts: UnspentTxOut[],
 ): number =>
-  unspentTxOuts
-    .filter(unspentTxOut => unspentTxOut.address === address)
-    .reduce((acc, unspentTxOut) => acc + unspentTxOut.amount, 0);
+  filterUnspentTxOutsByAddress(unspentTxOuts, address).reduce(
+    (acc, unspentTxOut) => acc + unspentTxOut.amount,
+    0,
+  );
+
+export const createTransaction = (
+  wallet: Wallet,
+  toAddress: PublicKey,
+  amount: number,
+  unspentTxOuts: UnspentTxOut[],
+): Transaction => {
+  const fromAddress: PublicKey = getPublicKey(wallet);
+  const { outPoints, amountToSendBack } = getOutPointsToSpend(
+    fromAddress,
+    amount,
+    unspentTxOuts,
+  );
+
+  const txOuts = createTxOuts(toAddress, fromAddress, amount, amountToSendBack);
+  const transactionId = getTransactionId(outPoints, txOuts);
+  const txIns = createTxIns(outPoints, wallet);
+
+  return { txIns, txOuts, id: transactionId };
+};
+
+const getOutPointsToSpend = (
+  address: PublicKey,
+  amount: number,
+  unspentTxOuts: UnspentTxOut[],
+): { outPoints: OutPoint[]; amountToSendBack: number } => {
+  const unspentTxOutsOfAddress = filterUnspentTxOutsByAddress(
+    unspentTxOuts,
+    address,
+  );
+
+  let currentAmount = 0;
+  let outPointsToSpend: OutPoint[] = [];
+
+  for (const unspentTxOut of unspentTxOutsOfAddress) {
+    outPointsToSpend = outPointsToSpend.concat([unspentTxOut.outPoint]);
+    currentAmount += unspentTxOut.amount;
+
+    if (currentAmount >= amount) {
+      return {
+        outPoints: outPointsToSpend,
+        amountToSendBack: currentAmount - amount,
+      };
+    }
+  }
+
+  throw new Error('insufficent funds');
+};
+
+const createTxOuts = (
+  toAddress: PublicKey,
+  fromAddress: PublicKey,
+  amount: number,
+  amountToSendBack: number,
+): TxOut[] => {
+  const txOut1: TxOut = { amount, address: toAddress };
+
+  if (amountToSendBack > 0) {
+    const txOut2: TxOut = { amount: amountToSendBack, address: fromAddress };
+    return [txOut1, txOut2];
+  }
+
+  return [txOut1];
+};
+
+const createTxIns = (prevOutPoints: OutPoint[], wallet: Wallet): TxIn[] =>
+  prevOutPoints.map(prevOutPoint => ({
+    prevOutPoint,
+    signature: signTxIn(prevOutPoint, wallet.privateKey),
+  }));

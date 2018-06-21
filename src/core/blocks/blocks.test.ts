@@ -10,7 +10,14 @@ describe('findBlock', () => {
   test('returns a hashed block', () => {
     const block: Block = findBlock({
       index: 0,
-      data: 'test',
+      data: {
+        coinbaseTransaction: {
+          id: '',
+          blockIndex: 0,
+          txOut: { address: '', amount: 1 },
+        },
+        transactions: [],
+      },
       prevHash: '',
       timestamp: Date.now(),
       difficulty: 1,
@@ -24,7 +31,14 @@ describe('isDifficultyAdjustmentBlock', () => {
   test('returns false when the block is the genesis block', () => {
     const block: Block = findBlock({
       index: 0,
-      data: 'test',
+      data: {
+        coinbaseTransaction: {
+          id: '',
+          blockIndex: 0,
+          txOut: { address: '', amount: 1 },
+        },
+        transactions: [],
+      },
       prevHash: '',
       timestamp: Date.now(),
       difficulty: 1,
@@ -38,7 +52,14 @@ describe('isDifficultyAdjustmentBlock', () => {
 
     const block: Block = findBlock({
       index,
-      data: 'test',
+      data: {
+        coinbaseTransaction: {
+          id: '',
+          blockIndex: 0,
+          txOut: { address: '', amount: 1 },
+        },
+        transactions: [],
+      },
       prevHash: 'test',
       timestamp: Date.now(),
       difficulty: 1,
@@ -55,7 +76,14 @@ describe('getTimeBetweenBlocks', () => {
 
     const block1: Block = findBlock({
       index: 0,
-      data: 'test',
+      data: {
+        coinbaseTransaction: {
+          id: '',
+          blockIndex: 0,
+          txOut: { address: '', amount: 1 },
+        },
+        transactions: [],
+      },
       prevHash: '',
       timestamp: timestamp1,
       difficulty: 1,
@@ -63,7 +91,14 @@ describe('getTimeBetweenBlocks', () => {
 
     const block2: Block = findBlock({
       index: 0,
-      data: 'test',
+      data: {
+        coinbaseTransaction: {
+          id: '',
+          blockIndex: 0,
+          txOut: { address: '', amount: 1 },
+        },
+        transactions: [],
+      },
       prevHash: '',
       timestamp: timestamp2,
       difficulty: 1,

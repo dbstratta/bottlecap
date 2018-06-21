@@ -1,6 +1,4 @@
-import { createHash } from 'crypto';
-
-import { Nonce } from './block';
+import { BlockData, Nonce } from './block';
 
 export function* nonceGenerator(startNonceFrom: number = 0) {
   let nonce: Nonce = startNonceFrom;
@@ -10,22 +8,14 @@ export function* nonceGenerator(startNonceFrom: number = 0) {
   }
 }
 
-export const stringifyHashableBlockData = (
-  index: number,
-  nonce: Nonce,
-  data: string,
-  prevHash: string,
-  timestamp: number,
-  difficulty: number,
-): string =>
-  [index, nonce, data, prevHash, timestamp, difficulty]
-    .map(a => a.toString())
-    .join();
-
-export const hashString = (str: string): string =>
-  createHash('sha256')
-    .update(str)
-    .digest('hex');
+export const stringifyHashableBlockContent = (data: {
+  index: number;
+  nonce: Nonce;
+  data: BlockData;
+  prevHash: string;
+  timestamp: number;
+  difficulty: number;
+}): string => JSON.stringify(data);
 
 const hexToBinaryLookupTable: { [key: string]: string } = {
   '0': '0000',
