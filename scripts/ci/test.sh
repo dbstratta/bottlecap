@@ -22,9 +22,16 @@ build_docker_image() {
 run_tests() {
     docker run \
         --rm \
-        -e CI \
-        -e TRAVIS \
-        -e CODECOV_TOKEN \
+        --env CI \
+        --env TRAVIS \
+        --env TRAVIS_COMMIT \
+        --env TRAVIS_JOB_NUMBER \
+        --env TRAVIS_BRANCH \
+        --env TRAVIS_JOB_ID \
+        --env TRAVIS_PULL_REQUEST \
+        --env TRAVIS_REPO_SLUG \
+        --env TRAVIS_BUILD_DIR \
+        --env CODECOV_TOKEN \
         "${image_name}" yarn test:ci
 }
 
