@@ -23,6 +23,7 @@ run_tests() {
     docker run \
         --rm \
         -e CI \
+        -e TRAVIS \
         -e CODECOV_TOKEN \
         "${image_name}" yarn test:ci
 }
