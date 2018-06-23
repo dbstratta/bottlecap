@@ -21,18 +21,13 @@ build_docker_image() {
 
 
 run_tests() {
+    local -r codecov_docker_env_variables="$(bash <(curl -s https://codecov.io/env))"
+
     docker run \
         --rm \
-        --env CODECOV_TOKEN \
         --env CI \
         --env TRAVIS \
-        --env TRAVIS_COMMIT \
-        --env TRAVIS_JOB_NUMBER \
-        --env TRAVIS_BRANCH \
-        --env TRAVIS_JOB_ID \
-        --env TRAVIS_PULL_REQUEST \
-        --env TRAVIS_REPO_SLUG \
-        --env TRAVIS_BUILD_DIR \
+        "${codecov_docker_env_variables}" \
         "${image_name}" yarn test:ci
 }
 
