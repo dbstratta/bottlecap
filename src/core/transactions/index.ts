@@ -5,7 +5,8 @@ export {
   TxOut,
   CoinbaseTransaction,
   OutPoint,
+  COINBASE_AMOUNT,
 } from './transaction';
-export { signTxIn, filterUnspentTxOutsByAddress } from './transactions';
+export { signTxIn, getUnspentTxOuts } from './transactions';
 export { isTransactionValid, isCoinbaseTransactionValid } from './validations';
-export { getTransactionId } from './helpers';
+export { getTransactionId, getCoinbaseTransactionId } from './helpers';

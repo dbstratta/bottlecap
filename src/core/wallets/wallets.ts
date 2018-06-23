@@ -7,8 +7,8 @@ import {
   PublicKey,
 } from '../ellipticCurveCrypto';
 import {
-  filterUnspentTxOutsByAddress,
   getTransactionId,
+  getUnspentTxOuts,
   OutPoint,
   signTxIn,
   Transaction,
@@ -18,7 +18,7 @@ import {
 } from '../transactions';
 import { Wallet } from '../wallets';
 
-export const initWallet = async (): Promise<Wallet> => {
+export const getWallet = async (): Promise<Wallet> => {
   const persistedWallet = await loadWalletIfExists();
 
   if (persistedWallet) {
@@ -62,12 +62,21 @@ export const getBalance = (
   address: PublicKey,
   unspentTxOuts: UnspentTxOut[],
 ): number =>
-  filterUnspentTxOutsByAddress(unspentTxOuts, address).reduce(
-    (acc, unspentTxOut) => acc + unspentTxOut.amount,
-    0,
-  );
+  unspentTxOuts
+    .filter(unspentTxOut => unspentTxOut.address === address)
+    .reduce((acc, unspentTxOut) => acc + unspentTxOut.amount, 0);
 
-export const createTransaction = (
+export const sendToAddress = async (
+  toAddress: PublicKey,
+  amount: number,
+): Promise<Transaction> => {
+  const wallet: Wallet = await getWallet();
+  const unspentTxOuts = getUnspentTxOuts();
+
+  return createTransaction(wallet, toAddress, amount, unspentTxOuts);
+};
+
+const createTransaction = (
   wallet: Wallet,
   toAddress: PublicKey,
   amount: number,
@@ -92,9 +101,8 @@ const getOutPointsToSpend = (
   amount: number,
   unspentTxOuts: UnspentTxOut[],
 ): { outPoints: OutPoint[]; amountToSendBack: number } => {
-  const unspentTxOutsOfAddress = filterUnspentTxOutsByAddress(
-    unspentTxOuts,
-    address,
+  const unspentTxOutsOfAddress = unspentTxOuts.filter(
+    unspentTxOut => unspentTxOut.address === address,
   );
 
   let currentAmount = 0;

@@ -59,6 +59,7 @@
     "@types/jest": "^23.1.0",
     "@types/node": "^10.3.3",
     "@types/ramda": "^0.25.33",
+    "@types/ws": "^5.1.2",
     "babel-core": "^7.0.0-0",
     "babel-eslint": "^8.2.3",
     "babel-jest": "^23.0.1",
@@ -87,7 +88,8 @@
     "elliptic": "^6.4.0",
     "graphql": "^0.13.2",
     "ramda": "^0.25.0",
-    "winston": "^3.0.0"
+    "winston": "^3.0.0",
+    "ws": "^5.2.0"
   },
   "resolutions": {
     "babel-core": "^7.0.0-bridge.0"

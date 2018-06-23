@@ -1,4 +1,24 @@
-import { BlockData, Nonce } from './block';
+import { sha256 } from '../helpers';
+import { Block, BlockData, Nonce } from './block';
+
+export const hashBlock = ({
+  index,
+  nonce,
+  data,
+  prevHash,
+  timestamp,
+  difficulty,
+}: Block): string =>
+  sha256(
+    stringifyHashableBlockContent({
+      index,
+      nonce,
+      data,
+      prevHash,
+      timestamp,
+      difficulty,
+    }),
+  );
 
 export function* nonceGenerator(startNonceFrom: number = 0) {
   let nonce: Nonce = startNonceFrom;

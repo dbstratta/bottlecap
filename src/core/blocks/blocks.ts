@@ -62,25 +62,6 @@ export const genesisBlock = findBlock({
   timestamp: Date.now(),
 });
 
-export const hashBlock = ({
-  index,
-  nonce,
-  data,
-  prevHash,
-  timestamp,
-  difficulty,
-}: Block): string =>
-  sha256(
-    stringifyHashableBlockContent({
-      index,
-      nonce,
-      data,
-      prevHash,
-      timestamp,
-      difficulty,
-    }),
-  );
-
 export const isDifficultyAdjustmentBlock = (block: Block): boolean =>
   block.index % DIFFICULTY_ADJUSMENT_INTERVAL === 0 && block.index !== 0;
 

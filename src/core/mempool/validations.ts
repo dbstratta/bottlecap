@@ -24,30 +24,3 @@ const mempoolContainsOutPoints = (
 
   return outPoints.some(outPoint => !!mempoolOutPoints.find(equals(outPoint)));
 };
-
-export const updateMempool = (
-  mempool: Mempool,
-  confirmedTransactions: Transaction[],
-): Mempool => {
-  const spentOutPoints: OutPoint[] = getSpentOutPoints(confirmedTransactions);
-
-  return {
-    transactions: mempool.transactions.filter(
-      mempoolTransaction =>
-        !usesSpentOutPoint(mempoolTransaction, spentOutPoints),
-    ),
-  };
-};
-
-const getSpentOutPoints = (transactions: Transaction[]): OutPoint[] =>
-  transactions
-    .flatMap(transaction => transaction.txIns)
-    .map(txIn => txIn.prevOutPoint);
-
-const usesSpentOutPoint = (
-  mempoolTransaction: Transaction,
-  spentOutPoints: OutPoint[],
-): boolean =>
-  mempoolTransaction.txIns.some(
-    txIn => !!spentOutPoints.find(equals(txIn.prevOutPoint)),
-  );

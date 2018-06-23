@@ -4,19 +4,18 @@ import {
   UnspentTxOut,
 } from '../transactions';
 import { Block, BlockData, Nonce } from './block';
-import { hashMatchesDifficulty } from './helpers';
+import { hashBlock, hashMatchesDifficulty } from './helpers';
 
 export const isNewBlockValid = (
   newBlock: Block,
   prevBlock: Block,
   unspentTxOuts: UnspentTxOut[],
-  blockHasher: (block: Block) => string,
 ): boolean =>
   isNewBlockStructureValid(newBlock) &&
   isNewBlockIndexValid(newBlock, prevBlock) &&
   isNewBlockPrevHashValid(newBlock, prevBlock) &&
   isNewBlockDataValid(newBlock, unspentTxOuts) &&
-  isNewBlockHashValid(newBlock, blockHasher) &&
+  isNewBlockHashValid(newBlock) &&
   isNewBlockTimestampValid(newBlock, prevBlock);
 
 export const isNewBlockStructureValid = ({
@@ -66,11 +65,8 @@ const isNewBlockDataValid = (
     isTransactionValid(transaction, unspentTxOuts),
   );
 
-const isNewBlockHashValid = (
-  block: Block,
-  blockHasher: (block: Block) => string,
-): boolean =>
-  block.hash !== blockHasher(block) &&
+const isNewBlockHashValid = (block: Block): boolean =>
+  block.hash !== hashBlock(block) &&
   hashMatchesDifficulty(block.hash, block.difficulty);
 
 const isNewBlockTimestampValid = (newBlock: Block, prevBlock: Block): boolean =>
