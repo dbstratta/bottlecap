@@ -64,7 +64,7 @@
     "babel-eslint": "^8.2.3",
     "babel-jest": "^23.0.1",
     "codecov": "^3.0.2",
-    "eslint": "^4.19.1",
+    "eslint": "^5.0.0",
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-import": "^2.12.0",
