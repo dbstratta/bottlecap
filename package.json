@@ -21,7 +21,7 @@
     "test:ci": "yarn test --coverage",
     "test:watch": "jest --onlyChanged --watch",
     "posttest:ci": "yarn coverage",
-    "coverage": "bash <(curl -s https://codecov.io/bash)",
+    "coverage": "codecov",
     "prebuild": "yarn typecheck:ts && yarn clean",
     "typecheck:ts": "tsc",
     "clean": "rimraf dist",
