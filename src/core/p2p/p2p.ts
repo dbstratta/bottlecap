@@ -1,7 +1,9 @@
 import * as WebSocket from 'ws';
 
 import { Blockchain } from '../blockchains';
+import { Block } from '../blocks';
 import logger from '../logger';
+import { Mempool } from '../mempool';
 
 export type Peer = {
   socket: WebSocket;
@@ -14,13 +16,31 @@ export const initP2pServer = (port: number): void => {
 
   p2pServer.on('connection', handleConnection);
 
-  logger.info('');
+  logger.info(`p2p node listening on ${port}`);
 };
 
 const handleConnection = (ws: WebSocket): void => {
-  peers = peers.concat([{ socket: ws }]);
+  peers = [...peers, { socket: ws }];
+
+  ws.on('message', (data: string) => handleMessage(ws, data));
+};
+
+const handleMessage = (ws: WebSocket, data: string): void => {
+  logger.info(data);
+  ws.send(`ack: ${data}`);
+};
+
+export const broadcastLatestBlock = (block: Block) => {
+  broadcast(JSON.stringify(block));
 };
 
 export const broadcastBlockchain = (blockchain: Blockchain): void => {
-  logger.info('blockchain broadcast');
+  broadcast(JSON.stringify(blockchain));
 };
+
+export const broadcastMempool = (mempool: Mempool): void => {
+  broadcast(JSON.stringify(mempool));
+};
+
+const broadcast = (data: string): void =>
+  peers.forEach(peer => peer.socket.send(data));

@@ -1,1 +1,1 @@
-export { broadcastBlockchain } from './p2p';
+export { broadcastBlockchain, initP2pServer } from './p2p';

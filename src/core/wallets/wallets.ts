@@ -109,7 +109,7 @@ const getOutPointsToSpend = (
   let outPointsToSpend: OutPoint[] = [];
 
   for (const unspentTxOut of unspentTxOutsOfAddress) {
-    outPointsToSpend = outPointsToSpend.concat([unspentTxOut.outPoint]);
+    outPointsToSpend = [...outPointsToSpend, unspentTxOut.outPoint];
     currentAmount += unspentTxOut.amount;
 
     if (currentAmount >= amount) {
