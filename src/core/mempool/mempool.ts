@@ -18,7 +18,7 @@ const mempool: Mempool = {
 
 export const getMempool = (): Mempool => mempool;
 
-export const addTransactionToMemPool = (
+export const addTransactionToMempool = (
   transaction: Transaction,
   unspentTxOuts: UnspentTxOut[],
 ): Mempool => {
@@ -29,7 +29,7 @@ export const addTransactionToMemPool = (
     throw new Error('invalid transaction');
   }
 
-  mempool.transactions = mempool.transactions.concat([transaction]);
+  mempool.transactions = [...mempool.transactions, transaction];
 
   return mempool;
 };

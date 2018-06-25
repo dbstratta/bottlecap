@@ -7,12 +7,12 @@
   "jest.autoEnable": false,
   "jest.enableCodeLens": false,
   "eslint.autoFixOnSave": true,
-  "prettier.eslintIntegration": false,
   "typescript.updateImportsOnFileMove.enabled": "always",
   "files.watcherExclude": {
     "**/.git/objects/**": true,
     "**/.git/subtree-cache/**": true,
     "**/node_modules/**": true,
     "**/dist/**": true
-  }
+  },
+  "prettier.eslintIntegration": false
 }

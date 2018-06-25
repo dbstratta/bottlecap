@@ -7,7 +7,8 @@ import {
 } from '../blockchains';
 import { Block } from '../blocks';
 import logger from '../logger';
-import { getMempool } from '../mempool';
+import { addTransactionToMempool, getMempool } from '../mempool';
+import { getUnspentTxOuts, Transaction } from '../transactions';
 
 export type Peer = {
   socket: WebSocket;
@@ -27,6 +28,7 @@ enum MessageType {
   RespondMempool = 'RESPOND_MEMPOOL',
   BroadcastActiveBlockchain = 'BROADCAST_ACTIVE_BLOCKCHAIN',
   BroadcastLatestBlock = 'BROADCAST_LASTEST_BLOCK',
+  BroadcastTransaction = 'BROADCAST_TRANSACTION',
 }
 
 let peers: Peer[] = [];
@@ -70,9 +72,16 @@ const handleMessage = (ws: WebSocket, data: string): void => {
     const mempool = getMempool();
 
     send(ws, { type: MessageType.RespondMempool, content: mempool });
-  }
+  } else if (message.type === MessageType.BroadcastTransaction) {
+    const transaction: Transaction = message.content;
+    const unspentTxOuts = getUnspentTxOuts();
 
-  ws.send(`ack: ${data}`);
+    try {
+      addTransactionToMempool(transaction, unspentTxOuts);
+    } catch (e) {
+      logger.error(e.message);
+    }
+  }
 };
 
 const parseMessage = (data: string): Message | null => {

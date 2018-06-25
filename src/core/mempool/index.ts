@@ -1,1 +1,1 @@
-export { Mempool, getMempool } from './mempool';
+export { Mempool, getMempool, addTransactionToMempool } from './mempool';
