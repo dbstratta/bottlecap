@@ -1,4 +1,4 @@
-module.exports = (api) => {
+module.exports = api => {
   const babelEnv = api.env();
 
   return {
@@ -14,5 +14,6 @@ module.exports = (api) => {
       ],
       '@babel/preset-typescript',
     ],
+    plugins: ['@babel/plugin-proposal-optional-catch-binding'],
   };
 };

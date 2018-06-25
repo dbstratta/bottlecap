@@ -24,7 +24,7 @@ import { isBlockchainValid } from './validations';
 
 let activeBlockchain: Blockchain = [genesisBlock];
 
-export const getActiveChain = (): Blockchain => activeBlockchain;
+export const getActiveBlockchain = (): Blockchain => activeBlockchain;
 
 export const maybeReplaceActiveBlockchain = (
   blockchain: Blockchain,
@@ -147,7 +147,7 @@ const getAdjustedDifficulty = (blockchain: Blockchain): number => {
   );
 };
 
-const getLatestBlock = (blockchain: Blockchain): Block =>
+export const getLatestBlock = (blockchain: Blockchain): Block =>
   blockchain[blockchain.length - 1];
 
 const getPrevDifficultyAdjustmentBlock = (blockchain: Blockchain): Block =>

@@ -1,13 +1,13 @@
-# Dependencies.
+# Dependencies
 node_modules
 
-# Testing.
+# Testing
 coverage
 
-# Production.
+# Production
 dist
 
-# Misc.
+# Misc
 .env
 *.pyc
 .DS_Store

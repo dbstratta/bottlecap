@@ -6,7 +6,7 @@
   "scripts": {
     "start:dev": "nodemon --exec babel-node --extensions \".ts,.tsx\" src/index.ts",
     "start:prod": "node dist/index.js",
-    "build": "babel src --out-dir dist --ignore spec.ts,test.ts",
+    "build": "babel --extensions \".ts,.tsx\" --out-dir dist --ignore spec.ts,test.ts src",
     "lint:ts": "tslint --project . --fix",
     "lint:ci": "yarn lint:ci:commit && yarn lint:shell && yarn lint:ci:js && yarn format:ci && yarn lint:ci:ts",
     "lint:ci:ts": "tslint --project .",
@@ -48,6 +48,7 @@
     "@babel/cli": "^7.0.0-beta.51",
     "@babel/core": "^7.0.0-beta.51",
     "@babel/node": "^7.0.0-beta.51",
+    "@babel/plugin-proposal-optional-catch-binding": "^7.0.0-beta.51",
     "@babel/preset-env": "^7.0.0-beta.51",
     "@babel/preset-typescript": "^7.0.0-beta.51",
     "@commitlint/cli": "^7.0.0",
