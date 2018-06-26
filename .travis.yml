@@ -6,28 +6,21 @@ stages:
   - name: deploy
     if: branch = master
 
-&config_node_js:
-  language: node_js
-  node_js: "10"
-  cache:
-    yarn: true
-
-&config_docker:
-  sudo: required
-  language: generic
-  services:
-    - docker
-
 jobs:
   include:
     - stage: lint
-      <<: *config_node_js
+      language: node_js
+      node_js: "10"
       script: ./scripts/ci/lint.sh
 
     - stage: test
-      <<: *config_docker
+      sudo: required
+      services:
+        -docker
       script: ./scripts/ci/test.sh
 
     - stage: deploy
-      <<: *config_docker
+      sudo: required
+      services:
+        -docker
       script: ./scripts/ci/deploy.sh
