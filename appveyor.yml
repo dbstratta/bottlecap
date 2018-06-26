@@ -1,0 +1,24 @@
+environment:
+  matrix:
+    - nodejs_version: '10'
+    - nodejs_version: '8'
+
+install:
+  - ps: Install-Product node $env:nodejs_version
+  - yarn install
+
+matrix:
+  fast_finish: true
+
+build: off
+
+shallow_clone: true
+
+test_script:
+  - node --version
+  - npm --version
+  - yarn --version
+  - yarn test
+
+cache:
+ - "%LOCALAPPDATA%\\Yarn"
