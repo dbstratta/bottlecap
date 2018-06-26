@@ -1,10 +1,4 @@
-sudo: required
-
-language: node_js
-node_js: "10"
-
-services:
-  - docker
+sudo: false
 
 stages:
   - lint
@@ -15,10 +9,18 @@ stages:
 jobs:
   include:
     - stage: lint
+      language: node_js
+      node_js: "10"
       script: ./scripts/ci/lint.sh
 
     - stage: test
+      sudo: required
+      services:
+        -docker
       script: ./scripts/ci/test.sh
 
     - stage: deploy
+      sudo: required
+      services:
+        -docker
       script: ./scripts/ci/deploy.sh
