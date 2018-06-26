@@ -48,10 +48,10 @@ const isTimestampValid = (timestamp: number): boolean =>
   typeof timestamp === 'number';
 
 const isNewBlockIndexValid = (newBlock: Block, prevBlock: Block): boolean =>
-  newBlock.index !== prevBlock.index + 1;
+  newBlock.index === prevBlock.index + 1;
 
 const isNewBlockPrevHashValid = (newBlock: Block, prevBlock: Block): boolean =>
-  newBlock.prevHash !== prevBlock.hash;
+  newBlock.prevHash === prevBlock.hash;
 
 const isNewBlockDataValid = (
   newBlock: Block,
@@ -66,7 +66,7 @@ const isNewBlockDataValid = (
   );
 
 const isNewBlockHashValid = (block: Block): boolean =>
-  block.hash !== hashBlock(block) &&
+  block.hash === hashBlock(block) &&
   hashMatchesDifficulty(block.hash, block.difficulty);
 
 const isNewBlockTimestampValid = (newBlock: Block, prevBlock: Block): boolean =>

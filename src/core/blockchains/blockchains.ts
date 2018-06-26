@@ -10,7 +10,7 @@ import {
 } from '../blocks';
 import { PublicKey } from '../ellipticCurveCrypto';
 import { getMempool, Mempool } from '../mempool';
-import { broadcastBlockchain } from '../p2p';
+import { broadcastActiveBlockchain } from '../p2p';
 import {
   COINBASE_AMOUNT,
   CoinbaseTransaction,
@@ -37,7 +37,7 @@ export const maybeReplaceActiveBlockchain = (
 
   if (hasMoreCumulativeDifficulty(blockchain, activeBlockchain)) {
     activeBlockchain = blockchain;
-    broadcastBlockchain(activeBlockchain);
+    broadcastActiveBlockchain(activeBlockchain);
 
     return activeBlockchain;
   }
@@ -106,7 +106,7 @@ const getNextCoinbaseTransaction = (
   return { id, blockIndex, txOut };
 };
 
-const addBlockToActiveBlockchain = (block: Block): Blockchain => {
+export const addBlockToActiveBlockchain = (block: Block): Blockchain => {
   const latestBlock = getLatestBlock(activeBlockchain);
   const unspentTxOuts = getUnspentTxOuts();
 
@@ -116,7 +116,9 @@ const addBlockToActiveBlockchain = (block: Block): Blockchain => {
     throw new Error('invalid block');
   }
 
-  activeBlockchain = activeBlockchain.concat([block]);
+  activeBlockchain = [...activeBlockchain, block];
+  broadcastActiveBlockchain(activeBlockchain);
+
   return activeBlockchain;
 };
 
@@ -160,12 +162,12 @@ const doGetAdjustedDifficulty = (
   timeBetweenBlocks: number,
   prevDifficultyAdjustmentBlock: Block,
 ): number => {
-  if (tookTooLong(timeBetweenBlocks)) {
+  if (tookTooLittle(timeBetweenBlocks)) {
     return prevDifficultyAdjustmentBlock.difficulty + 1;
   }
 
   if (
-    tookTooLittle(timeBetweenBlocks) &&
+    tookTooLong(timeBetweenBlocks) &&
     prevDifficultyAdjustmentBlock.difficulty > 0
   ) {
     return prevDifficultyAdjustmentBlock.difficulty - 1;
@@ -175,7 +177,7 @@ const doGetAdjustedDifficulty = (
 };
 
 const tookTooLong = (timeBetweenBlocks: number): boolean =>
-  timeBetweenBlocks < EXPECTED_TIME_BETWEEN_BLOCKS / 2;
+  timeBetweenBlocks > EXPECTED_TIME_BETWEEN_BLOCKS * 2;
 
 const tookTooLittle = (timeBetweenBlocks: number): boolean =>
-  timeBetweenBlocks > EXPECTED_TIME_BETWEEN_BLOCKS * 2;
+  timeBetweenBlocks < EXPECTED_TIME_BETWEEN_BLOCKS / 2;

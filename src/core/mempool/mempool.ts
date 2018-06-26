@@ -1,10 +1,11 @@
 import { equals } from 'ramda';
 
+import { broadcastTransaction } from '../p2p';
 import {
+  getUnspentTxOuts,
   isTransactionValid,
   OutPoint,
   Transaction,
-  UnspentTxOut,
 } from '../transactions';
 import { isTransactionForMempoolValid } from './validations';
 
@@ -18,10 +19,9 @@ const mempool: Mempool = {
 
 export const getMempool = (): Mempool => mempool;
 
-export const addTransactionToMempool = (
-  transaction: Transaction,
-  unspentTxOuts: UnspentTxOut[],
-): Mempool => {
+export const addTransactionToMempool = (transaction: Transaction): Mempool => {
+  const unspentTxOuts = getUnspentTxOuts();
+
   if (
     !isTransactionForMempoolValid(transaction, mempool) ||
     isTransactionValid(transaction, unspentTxOuts)
@@ -30,6 +30,7 @@ export const addTransactionToMempool = (
   }
 
   mempool.transactions = [...mempool.transactions, transaction];
+  broadcastTransaction(transaction);
 
   return mempool;
 };

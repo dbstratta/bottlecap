@@ -1,2 +1,7 @@
 export { Blockchain } from './blockchain';
-export { getActiveBlockchain, getLatestBlock } from './blockchains';
+export {
+  mineNextBlock,
+  getActiveBlockchain,
+  getLatestBlock,
+  addBlockToActiveBlockchain,
+} from './blockchains';

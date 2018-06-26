@@ -33,13 +33,15 @@ export const getWallet = async (): Promise<Wallet> => {
 
 const loadWalletIfExists = async (): Promise<Wallet | null> => {
   try {
-    return loadWallet();
+    const wallet = await loadWallet();
+
+    return wallet;
   } catch {
     return null;
   }
 };
 
-const PRIVATE_KEY_LOCATION = '';
+const PRIVATE_KEY_LOCATION = 'private_key';
 
 const loadWallet = async (): Promise<Wallet> => ({
   privateKey: await loadPrivateKey(),

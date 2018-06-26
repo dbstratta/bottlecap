@@ -1,1 +1,6 @@
-export { broadcastBlockchain, initP2pServer } from './p2p';
+export { startP2pServer } from './p2p';
+export {
+  broadcastActiveBlockchain,
+  broadcastLatestBlock,
+  broadcastTransaction,
+} from './broadcasting';
