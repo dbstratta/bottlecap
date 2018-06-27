@@ -2,6 +2,7 @@ import { gql } from 'apollo-server';
 
 import { getActiveBlockchain, mineNextBlock } from '../core/blockchains';
 import { Block } from '../core/blocks';
+import { getPeers } from '../core/p2p';
 
 export const typeDefs = gql`
   type Query {
@@ -10,7 +11,12 @@ export const typeDefs = gql`
   }
 
   type Blockchain {
-    blocks(first: Int, after: ID, last: Int, before: ID): BlockConnection!
+    blocks(
+      first: Int
+      after: String
+      last: Int
+      before: String
+    ): BlockConnection!
   }
 
   type BlockConnection {
@@ -71,7 +77,7 @@ export const typeDefs = gql`
   }
 
   type Peer {
-    name: String
+    id: ID!
   }
 
   type Mutation {
@@ -86,6 +92,7 @@ export const resolvers = {
         edges: getActiveBlockchain().map(block => ({ node: block })),
       },
     }),
+    peers: () => getPeers(),
   },
   Mutation: {
     mineBlock: (): Promise<Block> => {

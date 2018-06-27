@@ -4,3 +4,4 @@ export {
   broadcastLatestBlock,
   broadcastTransaction,
 } from './broadcasting';
+export { getPeers } from './peers';
