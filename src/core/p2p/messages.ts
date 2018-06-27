@@ -4,6 +4,8 @@ export type Message = {
 };
 
 export enum MessageType {
+  sendServerId = 'SEND_SERVER_ID',
+
   QueryActiveBlockchain = 'QUERY_ACTIVE_BLOCKCHAIN',
   QueryLatestBlock = 'QUERY_LATEST_BLOCK',
   QueryMempool = 'QUERY_MEMPOOL',
