@@ -1,11 +1,8 @@
 import {
   Block,
   BlockData,
-  EXPECTED_TIME_BETWEEN_DIFFICULTY_ADJUSTMENT,
   findBlock,
   genesisBlock,
-  getTimeBetweenBlocks,
-  isDifficultyAdjustmentBlock,
   validateNewBlock,
 } from '../blocks';
 import { PublicKey } from '../ellipticCurveCrypto';
@@ -21,7 +18,11 @@ import {
   updateUnspentTxOuts,
 } from '../transactions';
 import { getPublicKey } from '../wallets';
-import { hasMoreCumulativeDifficulty } from './helpers';
+import {
+  getDifficulty,
+  getLatestBlock,
+  hasMoreCumulativeDifficulty,
+} from './helpers';
 import { Blockchain } from './types';
 import { validateBlockchain } from './validators';
 
@@ -108,63 +109,3 @@ export const addBlockToActiveBlockchain = (block: Block): Blockchain => {
 
   return activeBlockchain;
 };
-
-const getDifficulty = (blockchain: Blockchain): number => {
-  const latestBlock = getLatestBlock(blockchain);
-
-  if (isDifficultyAdjustmentBlock(latestBlock)) {
-    return getAdjustedDifficulty(blockchain);
-  }
-
-  return latestBlock.difficulty;
-};
-
-const getAdjustedDifficulty = (blockchain: Blockchain): number => {
-  const latestBlock = getLatestBlock(blockchain);
-  const prevDifficultyAdjustmentBlock = getPrevDifficultyAdjustmentBlock(
-    blockchain,
-  );
-
-  const timeBetweenBlocks = getTimeBetweenBlocks(
-    latestBlock,
-    prevDifficultyAdjustmentBlock,
-  );
-
-  return doGetAdjustedDifficulty(
-    timeBetweenBlocks,
-    prevDifficultyAdjustmentBlock,
-  );
-};
-
-export const getLatestBlock = (blockchain: Blockchain): Block =>
-  blockchain[blockchain.length - 1];
-
-const getPrevDifficultyAdjustmentBlock = (blockchain: Blockchain): Block =>
-  blockchain
-    .slice()
-    .reverse()
-    .find(isDifficultyAdjustmentBlock) as Block;
-
-const doGetAdjustedDifficulty = (
-  timeBetweenBlocks: number,
-  prevDifficultyAdjustmentBlock: Block,
-): number => {
-  if (tookTooLittle(timeBetweenBlocks)) {
-    return prevDifficultyAdjustmentBlock.difficulty + 1;
-  }
-
-  if (
-    tookTooLong(timeBetweenBlocks) &&
-    prevDifficultyAdjustmentBlock.difficulty > 0
-  ) {
-    return prevDifficultyAdjustmentBlock.difficulty - 1;
-  }
-
-  return prevDifficultyAdjustmentBlock.difficulty;
-};
-
-const tookTooLong = (timeBetweenBlocks: number): boolean =>
-  timeBetweenBlocks > EXPECTED_TIME_BETWEEN_DIFFICULTY_ADJUSTMENT * 2;
-
-const tookTooLittle = (timeBetweenBlocks: number): boolean =>
-  timeBetweenBlocks < EXPECTED_TIME_BETWEEN_DIFFICULTY_ADJUSTMENT / 2;

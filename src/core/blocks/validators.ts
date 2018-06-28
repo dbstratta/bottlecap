@@ -73,13 +73,13 @@ const validateBlockTimestamp = ({ timestamp }: Block): void => {
 
 const validateNewBlockIndex = (newBlock: Block, prevBlock: Block): void => {
   if (newBlock.index !== prevBlock.index + 1) {
-    throw new BlockValidationError();
+    throw new BlockValidationError('invalid block index');
   }
 };
 
 const validateNewBlockPrevHash = (newBlock: Block, prevBlock: Block): void => {
   if (newBlock.prevHash !== prevBlock.hash) {
-    throw new BlockValidationError();
+    throw new BlockValidationError('invalid block prevHash');
   }
 };
 
@@ -99,17 +99,17 @@ const validateNewBlockData = (
 
 const validateNewBlockHash = (block: Block): void => {
   if (block.hash !== hashBlock(block)) {
-    throw new BlockValidationError();
+    throw new BlockValidationError('invalid block hash');
   }
 
   if (!hashMatchesDifficulty(block.hash, block.difficulty)) {
-    throw new BlockValidationError();
+    throw new BlockValidationError('invalid block hash work');
   }
 };
 
 const validateNewBlockTimestamp = (newBlock: Block, prevBlock: Block): void => {
   if (!isNewBlockTimestampInValidRange(newBlock, prevBlock)) {
-    throw new BlockValidationError();
+    throw new BlockValidationError('invalid block timestamp');
   }
 };
 
@@ -119,6 +119,6 @@ const isNewBlockTimestampInValidRange = (
 ): boolean => {
   return (
     newBlock.timestamp > prevBlock.timestamp - 60000 &&
-    newBlock.timestamp < prevBlock.timestamp + 60000
+    newBlock.timestamp < Date.now() + 60000
   );
 };

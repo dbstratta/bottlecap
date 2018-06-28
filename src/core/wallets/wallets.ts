@@ -20,6 +20,7 @@ import {
   UnspentTxOut,
 } from '../transactions';
 import { Wallet } from '../wallets';
+import { WalletError } from './errors';
 
 export const getWallet = async (): Promise<Wallet> => {
   const persistedWallet = await loadWalletIfExists();
@@ -83,7 +84,7 @@ const getBalanceOfAddress = (
 ): number =>
   unspentTxOuts
     .filter(unspentTxOut => isUnspentTxOutsOfAddress(unspentTxOut, address))
-    .filter(unspentTxOut => usesOutPointInMempool(unspentTxOut, mempool))
+    .filter(unspentTxOut => !usesOutPointInMempool(unspentTxOut, mempool))
     .reduce((acc, unspentTxOut) => acc + unspentTxOut.amount, 0);
 
 const usesOutPointInMempool = (
@@ -155,7 +156,7 @@ const getOutPointsToSpend = (
 ): { outPoints: OutPoint[]; amountToSendBack: number } => {
   const unspentTxOutsOfAddress = unspentTxOuts
     .filter(unspentTxOut => isUnspentTxOutsOfAddress(unspentTxOut, address))
-    .filter(unspentTxOut => usesOutPointInMempool(unspentTxOut, mempool));
+    .filter(unspentTxOut => !usesOutPointInMempool(unspentTxOut, mempool));
 
   let currentAmount = 0;
   let outPointsToSpend: OutPoint[] = [];
@@ -172,7 +173,7 @@ const getOutPointsToSpend = (
     }
   }
 
-  throw new Error('insufficent funds');
+  throw new WalletError('insufficent funds');
 };
 
 const createTxOuts = (

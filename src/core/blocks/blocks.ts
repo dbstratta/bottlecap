@@ -44,7 +44,9 @@ export const findBlock = ({
  * should adjust the difficulty after adding this block.
  */
 export const isDifficultyAdjustmentBlock = (block: Block): boolean =>
-  block.index % DIFFICULTY_ADJUSMENT_INTERVAL === 0 && block.index !== 0;
+  block.index % DIFFICULTY_ADJUSMENT_INTERVAL === 0 && !isGenesisBlock(block);
+
+const isGenesisBlock = (block: Block): boolean => block.index === 0;
 
 /**
  * Returns the time (in milliseconds) between two blocks.

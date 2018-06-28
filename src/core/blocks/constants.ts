@@ -1,15 +1,17 @@
+const second = 1000;
+
 /**
  * The expected time (in milliseconds)
  * for a block to be mined.
  */
-export const EXPECTED_TIME_FOR_BLOCK_MINING = 10000;
+export const EXPECTED_TIME_FOR_BLOCK_MINING = 2 * second;
 
 /**
  * The amount of blocks that have to be
  * mined before we adjust the difficulty
  * of the proof of work.
  */
-export const DIFFICULTY_ADJUSMENT_INTERVAL = 10;
+export const DIFFICULTY_ADJUSMENT_INTERVAL = 1;
 
 /**
  * The expected time (in milliseconds) between an
