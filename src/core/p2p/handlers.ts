@@ -6,10 +6,18 @@ import {
   getLatestBlock,
 } from '../blockchains';
 import { Block } from '../blocks';
-import logger from '../logger';
+import { tryOrLogError } from '../helpers';
 import { addTransactionToMempool, getMempool, Mempool } from '../mempool';
 import { Transaction } from '../transactions';
-import { Message, MessageType, parseMessage } from './messages';
+import {
+  createQueryActiveBlockchainMessage,
+  createSendActiveBlockchainMessage,
+  createSendLatestBlockMessage,
+  createSendMempoolMessage,
+  Message,
+  MessageType,
+  parseMessage,
+} from './messages';
 import { addPeer, removePeer, sendMessageToSocket } from './peers';
 
 export const handleMessage = (ws: WebSocket, data: string): void => {
@@ -19,7 +27,7 @@ export const handleMessage = (ws: WebSocket, data: string): void => {
     return;
   }
 
-  if (message.type === MessageType.sendServerId) {
+  if (message.type === MessageType.SendServerId) {
     handleSendServerId(ws, message);
   } else if (message.type === MessageType.QueryActiveBlockchain) {
     handleQueryActiveBlockchain(ws);
@@ -27,53 +35,36 @@ export const handleMessage = (ws: WebSocket, data: string): void => {
     handleQueryLatestBlock(ws);
   } else if (message.type === MessageType.QueryMempool) {
     handleQueryMempool(ws);
-  } else if (message.type === MessageType.RespondLatestBlock) {
-    handleRespondLatestBlock(ws, message);
-  } else if (message.type === MessageType.RespondMempool) {
-    handleRespondMempool(ws, message);
-  } else if (message.type === MessageType.BroadcastTransaction) {
-    handleBroadcastTransaction(ws, message);
+  } else if (message.type === MessageType.SendLatestBlock) {
+    handleSendLatestBlock(ws, message);
+  } else if (message.type === MessageType.SendMempool) {
+    handleSendMempool(ws, message);
+  } else if (message.type === MessageType.SendTransaction) {
+    handleSendTransaction(ws, message);
   }
 };
 
 const handleSendServerId = (ws: WebSocket, message: Message): void => {
   const serverId: string = message.content;
-
-  try {
-    addPeer(ws, serverId);
-  } catch (e) {
-    logger.error(e);
-  }
+  tryOrLogError(() => addPeer(ws, serverId));
 };
 
 const handleQueryActiveBlockchain = (ws: WebSocket): void => {
   const activeBlockchain = getActiveBlockchain();
-
-  sendMessageToSocket(ws, {
-    type: MessageType.RespondActiveBlockchain,
-    content: activeBlockchain,
-  });
+  sendMessageToSocket(ws, createSendActiveBlockchainMessage(activeBlockchain));
 };
 
 const handleQueryLatestBlock = (ws: WebSocket): void => {
   const latestBlock = getLatestBlock(getActiveBlockchain());
-
-  sendMessageToSocket(ws, {
-    type: MessageType.RespondLatestBlock,
-    content: latestBlock,
-  });
+  sendMessageToSocket(ws, createSendLatestBlockMessage(latestBlock));
 };
 
 const handleQueryMempool = (ws: WebSocket): void => {
   const mempool = getMempool();
-
-  sendMessageToSocket(ws, {
-    type: MessageType.RespondMempool,
-    content: mempool,
-  });
+  sendMessageToSocket(ws, createSendMempoolMessage(mempool));
 };
 
-const handleRespondLatestBlock = (ws: WebSocket, message: Message): void => {
+const handleSendLatestBlock = (ws: WebSocket, message: Message): void => {
   const receivedLatestBlock: Block = message.content;
   const activeBlockchain = getActiveBlockchain();
   const latestBlock = getLatestBlock(activeBlockchain);
@@ -81,34 +72,22 @@ const handleRespondLatestBlock = (ws: WebSocket, message: Message): void => {
   if (receivedLatestBlock.prevHash === latestBlock.hash) {
     addBlockToActiveBlockchain(receivedLatestBlock);
   } else if (receivedLatestBlock.hash !== latestBlock.hash) {
-    sendMessageToSocket(ws, {
-      type: MessageType.QueryActiveBlockchain,
-      content: null,
-    });
+    sendMessageToSocket(ws, createQueryActiveBlockchainMessage());
   }
 };
 
-const handleRespondMempool = (ws: WebSocket, message: Message): void => {
+const handleSendMempool = (ws: WebSocket, message: Message): void => {
   const receivedMempool: Mempool = message.content;
-
-  receivedMempool.transactions.forEach(transaction => {
-    try {
-      addTransactionToMempool(transaction);
-    } catch (e) {
-      logger.error(e.message);
-    }
-  });
+  receivedMempool.transactions.forEach(maybeAddTransactionToMempool);
 };
 
-const handleBroadcastTransaction = (ws: WebSocket, message: Message): void => {
+const handleSendTransaction = (ws: WebSocket, message: Message): void => {
   const transaction: Transaction = message.content;
-
-  try {
-    addTransactionToMempool(transaction);
-  } catch (e) {
-    logger.error(e.message);
-  }
+  maybeAddTransactionToMempool(transaction);
 };
+
+const maybeAddTransactionToMempool = (transaction: Transaction): void =>
+  tryOrLogError(() => addTransactionToMempool(transaction));
 
 export const handleClose = (ws: WebSocket): void => {
   removePeer(ws);

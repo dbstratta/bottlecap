@@ -6,6 +6,7 @@ import {
   PrivateKey,
   PublicKey,
 } from '../ellipticCurveCrypto';
+import { addTransactionToMempool } from '../mempool';
 import {
   getTransactionId,
   getUnspentTxOuts,
@@ -41,11 +42,11 @@ const loadWalletIfExists = async (): Promise<Wallet | null> => {
   }
 };
 
-const PRIVATE_KEY_LOCATION = 'private_key';
-
 const loadWallet = async (): Promise<Wallet> => ({
   privateKey: await loadPrivateKey(),
 });
+
+const PRIVATE_KEY_LOCATION = 'private_key';
 
 const loadPrivateKey = (): Promise<PrivateKey> =>
   fs.readFile(PRIVATE_KEY_LOCATION, 'utf8');
@@ -57,10 +58,22 @@ const createWallet = (): Wallet => ({
 const persistWallet = (wallet: Wallet): Promise<void> =>
   fs.writeFile(PRIVATE_KEY_LOCATION, wallet.privateKey);
 
-export const getPublicKey = ({ privateKey }: Wallet): PublicKey =>
+export const getPublicKey = async (): Promise<string> => {
+  const wallet = await getWallet();
+  return getPublicKeyOfWallet(wallet);
+};
+
+const getPublicKeyOfWallet = ({ privateKey }: Wallet): PublicKey =>
   getPublicKeyFromPrivateKey(privateKey);
 
-export const getBalance = (
+export const getBalance = async (): Promise<number> => {
+  const address = await getPublicKey();
+  const unspentTxOut = getUnspentTxOuts();
+
+  return getBalanceOfAddress(address, unspentTxOut);
+};
+
+const getBalanceOfAddress = (
   address: PublicKey,
   unspentTxOuts: UnspentTxOut[],
 ): number =>
@@ -75,7 +88,15 @@ export const sendToAddress = async (
   const wallet: Wallet = await getWallet();
   const unspentTxOuts = getUnspentTxOuts();
 
-  return createTransaction(wallet, toAddress, amount, unspentTxOuts);
+  const transaction = createTransaction(
+    wallet,
+    toAddress,
+    amount,
+    unspentTxOuts,
+  );
+  addTransactionToMempool(transaction);
+
+  return transaction;
 };
 
 const createTransaction = (
@@ -84,7 +105,7 @@ const createTransaction = (
   amount: number,
   unspentTxOuts: UnspentTxOut[],
 ): Transaction => {
-  const fromAddress: PublicKey = getPublicKey(wallet);
+  const fromAddress: PublicKey = getPublicKeyOfWallet(wallet);
   const { outPoints, amountToSendBack } = getOutPointsToSpend(
     fromAddress,
     amount,

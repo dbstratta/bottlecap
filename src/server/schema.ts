@@ -3,11 +3,19 @@ import { gql } from 'apollo-server';
 import { getActiveBlockchain, mineNextBlock } from '../core/blockchains';
 import { Block } from '../core/blocks';
 import { getPeers } from '../core/p2p';
+import { Transaction } from '../core/transactions';
+import { getBalance, getPublicKey, sendToAddress } from '../core/wallets';
 
 export const typeDefs = gql`
   type Query {
-    activeBlockchain: Blockchain
+    wallet: Wallet!
+    activeBlockchain: Blockchain!
     peers: [Peer]
+  }
+
+  type Wallet {
+    address: String!
+    balance: Int!
   }
 
   type Blockchain {
@@ -82,11 +90,21 @@ export const typeDefs = gql`
 
   type Mutation {
     mineBlock: Block!
+    sendToAddress(address: String!, amount: Int!): Transaction!
   }
 `;
 
+const resolveSendToAddress = (
+  rootValue: any,
+  args: any,
+): Promise<Transaction> => sendToAddress(args.address, args.amount);
+
 export const resolvers = {
   Query: {
+    wallet: () => ({
+      address: getPublicKey(),
+      balance: getBalance(),
+    }),
     activeBlockchain: () => ({
       blocks: {
         edges: getActiveBlockchain().map(block => ({ node: block })),
@@ -95,8 +113,7 @@ export const resolvers = {
     peers: () => getPeers(),
   },
   Mutation: {
-    mineBlock: (): Promise<Block> => {
-      return mineNextBlock();
-    },
+    mineBlock: (): Promise<Block> => mineNextBlock(),
+    sendToAddress: resolveSendToAddress,
   },
 };

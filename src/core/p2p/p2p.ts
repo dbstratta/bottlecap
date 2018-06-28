@@ -4,7 +4,7 @@ import WebSocket from 'ws';
 
 import logger from '../logger';
 import { handleClose, handleMessage } from './handlers';
-import { MessageType } from './messages';
+import { createSendServerIdMessage } from './messages';
 import { addPeer, nodeId, sendMessageToSocket } from './peers';
 
 export const startP2pServer = (port: number): void => {
@@ -14,6 +14,8 @@ export const startP2pServer = (port: number): void => {
 
   logger.info(`p2p node listening on ${port}`);
 };
+
+const nodeIdHeader = 'x-node-id';
 
 export const handleConnection = (
   ws: WebSocket,
@@ -33,18 +35,13 @@ export const handleConnection = (
     return;
   }
 
-  sendMessageToSocket(ws, {
-    type: MessageType.sendServerId,
-    content: nodeId,
-  });
+  sendMessageToSocket(ws, createSendServerIdMessage(nodeId));
 
   ws.on('message', (data: string) => handleMessage(ws, data));
   ws.on('close', () => handleClose(ws));
 };
 
 const isNodeIdValid = (id: any): boolean => typeof id === 'string';
-
-export const nodeIdHeader = 'x-node-id';
 
 export const connectToPeer = (peerUrl: string): void => {
   const headers = { [nodeIdHeader]: nodeId };

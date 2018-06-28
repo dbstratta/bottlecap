@@ -18,7 +18,7 @@ import {
   getUnspentTxOuts,
   TxOut,
 } from '../transactions';
-import { getPublicKey, getWallet, Wallet } from '../wallets';
+import { getPublicKey } from '../wallets';
 import { Blockchain } from './blockchain';
 import { isBlockchainValid } from './validations';
 
@@ -59,8 +59,7 @@ const getCumulativeDifficulty = (blockchain: Blockchain): number =>
 
 export const mineNextBlock = async (): Promise<Block> => {
   const latestBlock = getLatestBlock(activeBlockchain);
-  const wallet: Wallet = await getWallet();
-  const minerAddress: PublicKey = getPublicKey(wallet);
+  const minerAddress: PublicKey = await getPublicKey();
   const mempool: Mempool = getMempool();
 
   const index = getNextBlockIndex(latestBlock);

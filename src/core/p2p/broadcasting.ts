@@ -1,25 +1,26 @@
 import { Blockchain } from '../blockchains';
 import { Block } from '../blocks';
 import { Transaction } from '../transactions';
-import { Message, MessageType } from './messages';
+import {
+  createSendActiveBlockchainMessage,
+  createSendLatestBlockMessage,
+  createSendTransactionMessage,
+  Message,
+} from './messages';
 import { getPeers, sendMessageToSocket } from './peers';
 
-export const broadcastLatestBlock = (block: Block) => {
-  broadcast({ type: MessageType.BroadcastLatestBlock, content: block });
+export const broadcastLatestBlock = (latestBlock: Block) => {
+  broadcast(createSendLatestBlockMessage(latestBlock));
 };
 
-export const broadcastActiveBlockchain = (blockchain: Blockchain): void => {
-  broadcast({
-    type: MessageType.BroadcastActiveBlockchain,
-    content: blockchain,
-  });
+export const broadcastActiveBlockchain = (
+  activeBlockchain: Blockchain,
+): void => {
+  broadcast(createSendActiveBlockchainMessage(activeBlockchain));
 };
 
 export const broadcastTransaction = (transaction: Transaction): void => {
-  broadcast({
-    type: MessageType.BroadcastTransaction,
-    content: transaction,
-  });
+  broadcast(createSendTransactionMessage(transaction));
 };
 
 const broadcast = (message: Message): void =>

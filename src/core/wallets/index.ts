@@ -1,2 +1,2 @@
 export { Wallet } from './wallet';
-export { getWallet, getPublicKey } from './wallets';
+export { getWallet, getPublicKey, sendToAddress, getBalance } from './wallets';
