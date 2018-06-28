@@ -70,5 +70,5 @@ const isNewBlockHashValid = (block: Block): boolean =>
   hashMatchesDifficulty(block.hash, block.difficulty);
 
 const isNewBlockTimestampValid = (newBlock: Block, prevBlock: Block): boolean =>
-  newBlock.timestamp - 60000 < prevBlock.timestamp &&
-  newBlock.timestamp + 60000 > prevBlock.timestamp;
+  newBlock.timestamp > prevBlock.timestamp - 60000 &&
+  newBlock.timestamp < prevBlock.timestamp + 60000;

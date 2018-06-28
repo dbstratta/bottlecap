@@ -15,18 +15,14 @@ export const getPublicKeyFromPrivateKey = (
 
 export const generatePrivateKey = (): PrivateKey => {
   const key = ec.genKeyPair();
-  const privateKey = key.getPrivate();
+  const privateKey: PrivateKey = key.getPrivate('hex');
 
-  return privateKey.toString(16);
+  return privateKey;
 };
 
-export const sign = (
-  privateKey: PrivateKey,
-  data: string,
-  encoding: string = 'hex',
-): string => {
+export const sign = (privateKey: PrivateKey, data: string): string => {
   const key = ec.keyFromPrivate(privateKey, 'hex');
-  const signature: string = key.sign(data).toDER(encoding);
+  const signature: string = key.sign(data).toDER('hex');
 
   return signature;
 };
@@ -37,6 +33,5 @@ export const verify = (
   data: string,
 ): boolean => {
   const key = ec.keyFromPublic(publicKey, 'hex');
-
   return key.verify(data, signature);
 };

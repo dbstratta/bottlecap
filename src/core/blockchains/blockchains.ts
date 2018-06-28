@@ -9,7 +9,8 @@ import {
   isNewBlockValid,
 } from '../blocks';
 import { PublicKey } from '../ellipticCurveCrypto';
-import { getMempool, Mempool } from '../mempool';
+import logger from '../logger';
+import { getMempool, Mempool, updateMempool } from '../mempool';
 import { broadcastActiveBlockchain } from '../p2p';
 import {
   COINBASE_AMOUNT,
@@ -17,9 +18,11 @@ import {
   getCoinbaseTransactionId,
   getUnspentTxOuts,
   TxOut,
+  updateUnspentTxOuts,
 } from '../transactions';
 import { getPublicKey } from '../wallets';
 import { Blockchain } from './blockchain';
+import { hasMoreCumulativeDifficulty } from './helpers';
 import { isBlockchainValid } from './validations';
 
 let activeBlockchain: Blockchain = [genesisBlock];
@@ -45,18 +48,6 @@ export const maybeReplaceActiveBlockchain = (
   return activeBlockchain;
 };
 
-const hasMoreCumulativeDifficulty = (
-  blockchain1: Blockchain,
-  blockchain2: Blockchain,
-): boolean =>
-  getCumulativeDifficulty(blockchain1) > getCumulativeDifficulty(blockchain2);
-
-const getCumulativeDifficulty = (blockchain: Blockchain): number =>
-  blockchain
-    .map(block => block.difficulty)
-    .map(difficulty => 2 ** difficulty)
-    .reduce((acc, a) => acc + a);
-
 export const mineNextBlock = async (): Promise<Block> => {
   const latestBlock = getLatestBlock(activeBlockchain);
   const minerAddress: PublicKey = await getPublicKey();
@@ -71,6 +62,7 @@ export const mineNextBlock = async (): Promise<Block> => {
   const block = findBlock({ index, data, prevHash, timestamp, difficulty });
 
   addBlockToActiveBlockchain(block);
+  logger.info(`Block ${block.index} mined!`);
 
   return block;
 };
@@ -116,6 +108,8 @@ export const addBlockToActiveBlockchain = (block: Block): Blockchain => {
   }
 
   activeBlockchain = [...activeBlockchain, block];
+  updateUnspentTxOuts(block.data.coinbaseTransaction, block.data.transactions);
+  updateMempool(block.data.transactions);
   broadcastActiveBlockchain(activeBlockchain);
 
   return activeBlockchain;

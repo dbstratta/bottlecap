@@ -9,9 +9,9 @@ export {
 
 export {
   findBlock,
-  genesisBlock,
   isDifficultyAdjustmentBlock,
   getTimeBetweenBlocks,
 } from './blocks';
 export { isNewBlockValid, isNewBlockStructureValid } from './validations';
 export { hashBlock } from './helpers';
+export { genesisBlock } from './genesis';

@@ -24,7 +24,7 @@ export const addTransactionToMempool = (transaction: Transaction): Mempool => {
 
   if (
     !isTransactionForMempoolValid(transaction, mempool) ||
-    isTransactionValid(transaction, unspentTxOuts)
+    !isTransactionValid(transaction, unspentTxOuts)
   ) {
     throw new Error('invalid transaction');
   }

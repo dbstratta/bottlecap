@@ -1,6 +1,7 @@
 import { equals } from 'ramda';
 
 import { PrivateKey, sign } from '../ellipticCurveCrypto';
+import { genesisUnspentTxOut } from './genesis';
 import {
   CoinbaseTransaction,
   OutPoint,
@@ -9,23 +10,17 @@ import {
   UnspentTxOut,
 } from './transaction';
 
-const genesisUnspentTxOut: UnspentTxOut = {
-  outPoint: { txId: '', txOutIndex: 0 },
-  address:
-    '04e7df14239a29c81c819c485c2904bfea3bbce9a48b234a6f0d1276622eb07fede86fb35f1a23948d40b3802409b103f9d9ddbeb856f2424317cb3485eb42d5b6',
-  amount: 10,
-};
 let unspentTxOuts: UnspentTxOut[] = [genesisUnspentTxOut];
 
 export const signTxIn = (
-  prevOutPoint: OutPoint,
+  transactionId: string,
   privateKey: PrivateKey,
-): string => sign(privateKey, prevOutPoint.txId);
+): string => sign(privateKey, transactionId);
 
 export const getUnspentTxOuts = (): UnspentTxOut[] => unspentTxOuts;
 
 export const updateUnspentTxOuts = (
-  coinbaseTransaction: CoinbaseTransaction,
+  coinbaseTransaction: CoinbaseTransaction | null,
   transactions: Transaction[],
 ): UnspentTxOut[] => {
   unspentTxOuts = getUpdatedUnspentTxOuts(
@@ -38,7 +33,7 @@ export const updateUnspentTxOuts = (
 };
 
 const getUpdatedUnspentTxOuts = (
-  coinbaseTransaction: CoinbaseTransaction,
+  coinbaseTransaction: CoinbaseTransaction | null,
   transactions: Transaction[],
   oldUnspentTxOuts: UnspentTxOut[],
 ): UnspentTxOut[] => {
@@ -49,26 +44,31 @@ const getUpdatedUnspentTxOuts = (
   const spentOutPoints = getNewSpentOutPoints(transactions);
 
   const isUnspentTxOutSpent = (unspentTxOut: UnspentTxOut) =>
-    !!spentOutPoints.find(equals(unspentTxOut.outPoint));
+    !spentOutPoints.find(equals(unspentTxOut.outPoint));
 
   return oldUnspentTxOuts.filter(isUnspentTxOutSpent).concat(newUnspentTxOuts);
 };
 
 const getNewUnspentTxOuts = (
-  coinbaseTransaction: CoinbaseTransaction,
+  coinbaseTransaction: CoinbaseTransaction | null,
   transactions: Transaction[],
 ): UnspentTxOut[] => {
-  const unspentTxOutFromCoinbaseTransaction = getUnspentTxOutFromCoinbaseTransaction(
-    coinbaseTransaction,
-  );
+  const unspentTxOutFromCoinbaseTransaction =
+    coinbaseTransaction &&
+    getUnspentTxOutFromCoinbaseTransaction(coinbaseTransaction);
 
   const unspentTxOutsFromTransactions = getUnspentTxOutsFromTransactions(
     transactions,
   );
 
-  return [unspentTxOutFromCoinbaseTransaction].concat(
-    unspentTxOutsFromTransactions,
-  );
+  if (unspentTxOutFromCoinbaseTransaction) {
+    return [
+      unspentTxOutFromCoinbaseTransaction,
+      ...unspentTxOutsFromTransactions,
+    ];
+  }
+
+  return unspentTxOutsFromTransactions;
 };
 
 const getUnspentTxOutFromCoinbaseTransaction = (

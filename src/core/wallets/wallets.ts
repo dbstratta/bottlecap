@@ -16,6 +16,7 @@ import {
   TxIn,
   TxOut,
   UnspentTxOut,
+  updateUnspentTxOuts,
 } from '../transactions';
 import { Wallet } from '../wallets';
 
@@ -95,6 +96,7 @@ export const sendToAddress = async (
     unspentTxOuts,
   );
   addTransactionToMempool(transaction);
+  updateUnspentTxOuts(null, [transaction]);
 
   return transaction;
 };
@@ -114,9 +116,11 @@ const createTransaction = (
 
   const txOuts = createTxOuts(toAddress, fromAddress, amount, amountToSendBack);
   const transactionId = getTransactionId(outPoints, txOuts);
-  const txIns = createTxIns(outPoints, wallet);
+  const txIns = createTxIns(transactionId, outPoints, wallet);
 
-  return { txIns, txOuts, id: transactionId };
+  const transaction: Transaction = { txIns, txOuts, id: transactionId };
+
+  return transaction;
 };
 
 const getOutPointsToSpend = (
@@ -162,8 +166,12 @@ const createTxOuts = (
   return [txOut1];
 };
 
-const createTxIns = (prevOutPoints: OutPoint[], wallet: Wallet): TxIn[] =>
+const createTxIns = (
+  transactionId: string,
+  prevOutPoints: OutPoint[],
+  wallet: Wallet,
+): TxIn[] =>
   prevOutPoints.map(prevOutPoint => ({
     prevOutPoint,
-    signature: signTxIn(prevOutPoint, wallet.privateKey),
+    signature: signTxIn(transactionId, wallet.privateKey),
   }));
