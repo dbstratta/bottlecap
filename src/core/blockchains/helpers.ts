@@ -1,4 +1,4 @@
-import { Blockchain } from './blockchain';
+import { Blockchain } from './types';
 
 export const hasMoreCumulativeDifficulty = (
   blockchain1: Blockchain,

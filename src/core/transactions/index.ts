@@ -5,13 +5,14 @@ export {
   TxOut,
   CoinbaseTransaction,
   OutPoint,
-  COINBASE_AMOUNT,
-} from './transaction';
+} from './types';
+export { COINBASE_AMOUNT } from './constants';
 export {
   signTxIn,
   getUnspentTxOuts,
   updateUnspentTxOuts,
 } from './transactions';
-export { isTransactionValid, isCoinbaseTransactionValid } from './validations';
+export { validateCoinbaseTransaction, validateTransaction } from './validators';
 export { getTransactionId, getCoinbaseTransactionId } from './helpers';
 export { genesisCoinbaseTransaction } from './genesis';
+export { TransactionValidationError } from './errors';

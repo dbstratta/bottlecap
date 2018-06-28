@@ -3,15 +3,12 @@ import { equals } from 'ramda';
 import { broadcastTransaction } from '../p2p';
 import {
   getUnspentTxOuts,
-  isTransactionValid,
   OutPoint,
   Transaction,
+  validateTransaction,
 } from '../transactions';
-import { isTransactionForMempoolValid } from './validations';
-
-export type Mempool = {
-  transactions: Transaction[];
-};
+import { Mempool } from './types';
+import { validateTransactionForMempool } from './validators';
 
 const mempool: Mempool = {
   transactions: [],
@@ -22,12 +19,8 @@ export const getMempool = (): Mempool => mempool;
 export const addTransactionToMempool = (transaction: Transaction): Mempool => {
   const unspentTxOuts = getUnspentTxOuts();
 
-  if (
-    !isTransactionForMempoolValid(transaction, mempool) ||
-    !isTransactionValid(transaction, unspentTxOuts)
-  ) {
-    throw new Error('invalid transaction');
-  }
+  validateTransaction(transaction, unspentTxOuts);
+  validateTransactionForMempool(transaction, mempool);
 
   mempool.transactions = [...mempool.transactions, transaction];
   broadcastTransaction(transaction);

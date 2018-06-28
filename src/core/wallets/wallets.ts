@@ -1,12 +1,14 @@
 import { promises as fs } from 'fs';
 
+import { equals } from 'ramda';
+
 import {
   generatePrivateKey,
   getPublicKeyFromPrivateKey,
   PrivateKey,
   PublicKey,
 } from '../ellipticCurveCrypto';
-import { addTransactionToMempool } from '../mempool';
+import { addTransactionToMempool, getMempool, Mempool } from '../mempool';
 import {
   getTransactionId,
   getUnspentTxOuts,
@@ -16,7 +18,6 @@ import {
   TxIn,
   TxOut,
   UnspentTxOut,
-  updateUnspentTxOuts,
 } from '../transactions';
 import { Wallet } from '../wallets';
 
@@ -70,17 +71,37 @@ const getPublicKeyOfWallet = ({ privateKey }: Wallet): PublicKey =>
 export const getBalance = async (): Promise<number> => {
   const address = await getPublicKey();
   const unspentTxOut = getUnspentTxOuts();
+  const mempool = getMempool();
 
-  return getBalanceOfAddress(address, unspentTxOut);
+  return getBalanceOfAddress(address, unspentTxOut, mempool);
 };
 
 const getBalanceOfAddress = (
   address: PublicKey,
   unspentTxOuts: UnspentTxOut[],
+  mempool: Mempool,
 ): number =>
   unspentTxOuts
-    .filter(unspentTxOut => unspentTxOut.address === address)
+    .filter(unspentTxOut => isUnspentTxOutsOfAddress(unspentTxOut, address))
+    .filter(unspentTxOut => usesOutPointInMempool(unspentTxOut, mempool))
     .reduce((acc, unspentTxOut) => acc + unspentTxOut.amount, 0);
+
+const usesOutPointInMempool = (
+  unspentTxOut: UnspentTxOut,
+  mempool: Mempool,
+): boolean => {
+  const outPoint = unspentTxOut.outPoint;
+  const mempoolOutPoints: OutPoint[] = mempool.transactions
+    .flatMap(transaction => transaction.txIns)
+    .map(txIn => txIn.prevOutPoint);
+
+  return !!mempoolOutPoints.find(equals(outPoint));
+};
+
+const isUnspentTxOutsOfAddress = (
+  unspentTxOut: UnspentTxOut,
+  address: PublicKey,
+): boolean => unspentTxOut.address === address;
 
 export const sendToAddress = async (
   toAddress: PublicKey,
@@ -88,15 +109,16 @@ export const sendToAddress = async (
 ): Promise<Transaction> => {
   const wallet: Wallet = await getWallet();
   const unspentTxOuts = getUnspentTxOuts();
+  const mempool = getMempool();
 
   const transaction = createTransaction(
     wallet,
     toAddress,
     amount,
     unspentTxOuts,
+    mempool,
   );
   addTransactionToMempool(transaction);
-  updateUnspentTxOuts(null, [transaction]);
 
   return transaction;
 };
@@ -106,12 +128,14 @@ const createTransaction = (
   toAddress: PublicKey,
   amount: number,
   unspentTxOuts: UnspentTxOut[],
+  mempool: Mempool,
 ): Transaction => {
   const fromAddress: PublicKey = getPublicKeyOfWallet(wallet);
   const { outPoints, amountToSendBack } = getOutPointsToSpend(
     fromAddress,
     amount,
     unspentTxOuts,
+    mempool,
   );
 
   const txOuts = createTxOuts(toAddress, fromAddress, amount, amountToSendBack);
@@ -127,10 +151,11 @@ const getOutPointsToSpend = (
   address: PublicKey,
   amount: number,
   unspentTxOuts: UnspentTxOut[],
+  mempool: Mempool,
 ): { outPoints: OutPoint[]; amountToSendBack: number } => {
-  const unspentTxOutsOfAddress = unspentTxOuts.filter(
-    unspentTxOut => unspentTxOut.address === address,
-  );
+  const unspentTxOutsOfAddress = unspentTxOuts
+    .filter(unspentTxOut => isUnspentTxOutsOfAddress(unspentTxOut, address))
+    .filter(unspentTxOut => usesOutPointInMempool(unspentTxOut, mempool));
 
   let currentAmount = 0;
   let outPointsToSpend: OutPoint[] = [];

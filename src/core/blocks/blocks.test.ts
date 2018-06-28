@@ -1,10 +1,11 @@
-import { Block, DIFFICULTY_ADJUSMENT_INTERVAL } from './block';
 import {
   findBlock,
   getTimeBetweenBlocks,
   isDifficultyAdjustmentBlock,
 } from './blocks';
+import { DIFFICULTY_ADJUSMENT_INTERVAL } from './constants';
 import { hashBlock } from './helpers';
+import { Block } from './types';
 
 describe('findBlock', () => {
   test('returns a hashed block', () => {

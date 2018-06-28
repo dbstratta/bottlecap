@@ -1,12 +1,12 @@
 import {
   Block,
   BlockData,
-  EXPECTED_TIME_BETWEEN_BLOCKS,
+  EXPECTED_TIME_BETWEEN_DIFFICULTY_ADJUSTMENT,
   findBlock,
   genesisBlock,
   getTimeBetweenBlocks,
   isDifficultyAdjustmentBlock,
-  isNewBlockValid,
+  validateNewBlock,
 } from '../blocks';
 import { PublicKey } from '../ellipticCurveCrypto';
 import logger from '../logger';
@@ -21,9 +21,9 @@ import {
   updateUnspentTxOuts,
 } from '../transactions';
 import { getPublicKey } from '../wallets';
-import { Blockchain } from './blockchain';
 import { hasMoreCumulativeDifficulty } from './helpers';
-import { isBlockchainValid } from './validations';
+import { Blockchain } from './types';
+import { validateBlockchain } from './validators';
 
 let activeBlockchain: Blockchain = [genesisBlock];
 
@@ -34,9 +34,7 @@ export const maybeReplaceActiveBlockchain = (
 ): Blockchain => {
   const unspentTxOuts = getUnspentTxOuts();
 
-  if (!isBlockchainValid(blockchain, unspentTxOuts)) {
-    throw new Error('invalid blockchain');
-  }
+  validateBlockchain(blockchain, unspentTxOuts);
 
   if (hasMoreCumulativeDifficulty(blockchain, activeBlockchain)) {
     activeBlockchain = blockchain;
@@ -101,11 +99,7 @@ export const addBlockToActiveBlockchain = (block: Block): Blockchain => {
   const latestBlock = getLatestBlock(activeBlockchain);
   const unspentTxOuts = getUnspentTxOuts();
 
-  const isBlockValid = isNewBlockValid(block, latestBlock, unspentTxOuts);
-
-  if (!isBlockValid) {
-    throw new Error('invalid block');
-  }
+  validateNewBlock(block, latestBlock, unspentTxOuts);
 
   activeBlockchain = [...activeBlockchain, block];
   updateUnspentTxOuts(block.data.coinbaseTransaction, block.data.transactions);
@@ -170,7 +164,7 @@ const doGetAdjustedDifficulty = (
 };
 
 const tookTooLong = (timeBetweenBlocks: number): boolean =>
-  timeBetweenBlocks > EXPECTED_TIME_BETWEEN_BLOCKS * 2;
+  timeBetweenBlocks > EXPECTED_TIME_BETWEEN_DIFFICULTY_ADJUSTMENT * 2;
 
 const tookTooLittle = (timeBetweenBlocks: number): boolean =>
-  timeBetweenBlocks < EXPECTED_TIME_BETWEEN_BLOCKS / 2;
+  timeBetweenBlocks < EXPECTED_TIME_BETWEEN_DIFFICULTY_ADJUSTMENT / 2;

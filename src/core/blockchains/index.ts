@@ -1,4 +1,4 @@
-export { Blockchain } from './blockchain';
+export { Blockchain } from './types';
 export {
   mineNextBlock,
   getActiveBlockchain,

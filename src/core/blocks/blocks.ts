@@ -1,24 +1,16 @@
 import { sha256 } from '../helpers';
-import {
-  Block,
-  BlockData,
-  DIFFICULTY_ADJUSMENT_INTERVAL,
-  Nonce,
-} from './block';
+import { DIFFICULTY_ADJUSMENT_INTERVAL } from './constants';
 import {
   hashMatchesDifficulty,
   nonceGenerator,
   stringifyHashableBlockContent,
 } from './helpers';
+import { Block, FindBlockArgs, Nonce } from './types';
 
-type FindBlockArgs = {
-  index: number;
-  data: BlockData;
-  prevHash: string;
-  timestamp: number;
-  difficulty: number;
-};
-
+/**
+ * Finds and returns a `Block` with a hash that
+ * passes the difficulty.
+ */
 export const findBlock = ({
   index,
   data,
@@ -47,8 +39,15 @@ export const findBlock = ({
   }
 };
 
+/**
+ * Returns `true` if the blockchain receiving this block
+ * should adjust the difficulty after adding this block.
+ */
 export const isDifficultyAdjustmentBlock = (block: Block): boolean =>
   block.index % DIFFICULTY_ADJUSMENT_INTERVAL === 0 && block.index !== 0;
 
+/**
+ * Returns the time (in milliseconds) between two blocks.
+ */
 export const getTimeBetweenBlocks = (block1: Block, block2: Block): number =>
   block1.timestamp - block2.timestamp;

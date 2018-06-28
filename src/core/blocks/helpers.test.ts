@@ -1,6 +1,6 @@
-import { Block } from './block';
 import { findBlock } from './blocks';
 import { hashMatchesDifficulty, hexToBinary, nonceGenerator } from './helpers';
+import { Block } from './types';
 
 describe('hashMatchesDifficulty', () => {
   it('returns true when the hash of a block matches the difficulty', () => {

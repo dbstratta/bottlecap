@@ -1,6 +1,9 @@
 import { sha256 } from '../helpers';
-import { Block, BlockData, Nonce } from './block';
+import { Block, BlockData, Nonce } from './types';
 
+/**
+ * Returns the hash of a `Block`.
+ */
 export const hashBlock = ({
   index,
   nonce,
@@ -20,6 +23,9 @@ export const hashBlock = ({
     }),
   );
 
+/**
+ * Generator function that yields nonces infinitely.
+ */
 export function* nonceGenerator(startNonceFrom: number = 0) {
   let nonce: Nonce = startNonceFrom;
   while (true) {
@@ -56,6 +62,9 @@ const hexToBinaryLookupTable: { [key: string]: string } = {
   f: '1111',
 };
 
+/**
+ * Returns the string in binary of a string in hexadecimal.
+ */
 export const hexToBinary = (data: string): string =>
   data
     .split('')
@@ -65,6 +74,10 @@ export const hexToBinary = (data: string): string =>
       '',
     );
 
+/**
+ * Returns `true` if the hash passes the difficulty
+ * (amount of work).
+ */
 export const hashMatchesDifficulty = (
   hash: string,
   difficulty: number,

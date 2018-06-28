@@ -1,17 +1,23 @@
 import { equals } from 'ramda';
 
-import { OutPoint, Transaction } from '../transactions';
-import { Mempool } from './mempool';
+import {
+  OutPoint,
+  Transaction,
+  TransactionValidationError,
+} from '../transactions';
+import { Mempool } from './types';
 
-export const isTransactionForMempoolValid = (
+export const validateTransactionForMempool = (
   transaction: Transaction,
   mempool: Mempool,
-): boolean => {
+): void => {
   const transactionOutPoints: OutPoint[] = transaction.txIns.map(
     txIn => txIn.prevOutPoint,
   );
 
-  return !mempoolContainsOutPoints(mempool, transactionOutPoints);
+  if (mempoolContainsOutPoints(mempool, transactionOutPoints)) {
+    throw new TransactionValidationError();
+  }
 };
 
 const mempoolContainsOutPoints = (

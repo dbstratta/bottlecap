@@ -1,14 +1,22 @@
 import { equals } from 'ramda';
 
 import { sha256 } from '../helpers';
-import { OutPoint, TxOut, UnspentTxOut } from './transaction';
+import { OutPoint, TxOut, UnspentTxOut } from './types';
 
+/**
+ * Given an outPoint and a list of unspentTxOuts,
+ * returns the unspentTxOut that matches the outPoint.
+ * If no unspentTxOut matches the outPoint, returns `undefined`.
+ */
 export const getUnspentTxOut = (
   outPoint: OutPoint,
   unspentTxOuts: UnspentTxOut[],
 ): UnspentTxOut | undefined =>
   unspentTxOuts.find(unspentTxOut => equals(unspentTxOut.outPoint, outPoint));
 
+/**
+ * Returns the ID (sha256) of a transaction.
+ */
 export const getTransactionId = (
   prevOutPoints: OutPoint[],
   txOuts: TxOut[],
@@ -23,6 +31,9 @@ export const getTransactionId = (
   return sha256(stringToHash);
 };
 
+/**
+ * Returns the ID (sha256) of a coinbase transaction.
+ */
 export const getCoinbaseTransactionId = (
   blockIndex: number,
   txOut: TxOut,

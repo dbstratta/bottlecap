@@ -8,7 +8,7 @@ import {
   Transaction,
   TxOut,
   UnspentTxOut,
-} from './transaction';
+} from './types';
 
 let unspentTxOuts: UnspentTxOut[] = [genesisUnspentTxOut];
 
@@ -20,7 +20,7 @@ export const signTxIn = (
 export const getUnspentTxOuts = (): UnspentTxOut[] => unspentTxOuts;
 
 export const updateUnspentTxOuts = (
-  coinbaseTransaction: CoinbaseTransaction | null,
+  coinbaseTransaction: CoinbaseTransaction,
   transactions: Transaction[],
 ): UnspentTxOut[] => {
   unspentTxOuts = getUpdatedUnspentTxOuts(
@@ -33,7 +33,7 @@ export const updateUnspentTxOuts = (
 };
 
 const getUpdatedUnspentTxOuts = (
-  coinbaseTransaction: CoinbaseTransaction | null,
+  coinbaseTransaction: CoinbaseTransaction,
   transactions: Transaction[],
   oldUnspentTxOuts: UnspentTxOut[],
 ): UnspentTxOut[] => {
@@ -50,7 +50,7 @@ const getUpdatedUnspentTxOuts = (
 };
 
 const getNewUnspentTxOuts = (
-  coinbaseTransaction: CoinbaseTransaction | null,
+  coinbaseTransaction: CoinbaseTransaction,
   transactions: Transaction[],
 ): UnspentTxOut[] => {
   const unspentTxOutFromCoinbaseTransaction =
@@ -61,14 +61,10 @@ const getNewUnspentTxOuts = (
     transactions,
   );
 
-  if (unspentTxOutFromCoinbaseTransaction) {
-    return [
-      unspentTxOutFromCoinbaseTransaction,
-      ...unspentTxOutsFromTransactions,
-    ];
-  }
-
-  return unspentTxOutsFromTransactions;
+  return [
+    unspentTxOutFromCoinbaseTransaction,
+    ...unspentTxOutsFromTransactions,
+  ];
 };
 
 const getUnspentTxOutFromCoinbaseTransaction = (
