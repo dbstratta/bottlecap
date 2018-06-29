@@ -1,15 +1,18 @@
 {
   "compilerOptions": {
+    "charset": "utf8",
     "module": "commonjs",
     "strict": true,
     "target": "ESNext",
     "removeComments": true,
     "esModuleInterop": true,
-    "outDir": "dist",
+    "noEmit": true,
     "sourceMap": true,
+    "noErrorTruncation": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
+    "noUnusedParameters": false,
     "skipLibCheck": true
   },
   "include": ["src/**/*"],
