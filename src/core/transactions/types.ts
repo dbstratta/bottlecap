@@ -1,4 +1,4 @@
-import { PublicKey } from '../ellipticCurveCrypto';
+import { PublicKey, Signature } from '../ellipticCurveCrypto';
 
 /**
  * A `Transaction` is an interchange of
@@ -21,7 +21,7 @@ export type TxIn = {
    * of the `TxIn` signed by the creator
    * of the `Transaction`.
    */
-  signature: string;
+  signature: Signature;
 };
 
 /**

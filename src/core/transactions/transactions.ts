@@ -1,6 +1,6 @@
 import { equals } from 'ramda';
 
-import { PrivateKey, sign } from '../ellipticCurveCrypto';
+import { PrivateKey, sign, Signature } from '../ellipticCurveCrypto';
 import { genesisUnspentTxOut } from './genesis';
 import {
   CoinbaseTransaction,
@@ -15,7 +15,7 @@ let unspentTxOuts: UnspentTxOut[] = [genesisUnspentTxOut];
 export const signTxIn = (
   transactionId: string,
   privateKey: PrivateKey,
-): string => sign(privateKey, transactionId);
+): Signature => sign(privateKey, transactionId);
 
 export const getUnspentTxOuts = (): UnspentTxOut[] => unspentTxOuts;
 
