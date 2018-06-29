@@ -1,0 +1,7 @@
+[build]
+# The directory to look for package.json, .nvmrc, etc.
+base = ""
+# Build output directory.
+publish = "website/build/bottlecap"
+# Command to build the files.
+command = "cd website && yarn install && yarn build"
