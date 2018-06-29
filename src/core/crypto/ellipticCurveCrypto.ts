@@ -1,6 +1,6 @@
 import { ec as EC } from 'elliptic';
 
-import { PrivateKey, PublicKey, Signature } from './types';
+import { KeyPair, PrivateKey, PublicKey, Signature } from './types';
 
 const ellipticCurveName = 'secp256k1';
 const ec = new EC(ellipticCurveName);
@@ -12,17 +12,20 @@ export const getPublicKeyFromPrivateKey = (
   privateKey: PrivateKey,
 ): PublicKey => {
   const key = ec.keyFromPrivate(privateKey, 'hex');
-  return key.getPublic().encode('hex');
+  return key.getPublic('hex');
 };
 
 /**
- * Generates a random private key.
+ * Generates a random key pair.
  */
-export const generatePrivateKey = (): PrivateKey => {
+export const generateKeyPair = (): KeyPair => {
   const key = ec.genKeyPair();
-  const privateKey: PrivateKey = key.getPrivate('hex');
 
-  return privateKey;
+  const privateKey: PrivateKey = key.getPrivate('hex');
+  const publicKey: PublicKey = key.getPublic('hex');
+  const keyPair: KeyPair = { privateKey, publicKey };
+
+  return keyPair;
 };
 
 /**

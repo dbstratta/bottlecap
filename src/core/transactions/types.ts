@@ -1,4 +1,4 @@
-import { PublicKey, Signature } from '../ellipticCurveCrypto';
+import { PublicKey, Signature } from '../crypto';
 
 /**
  * A `Transaction` is an interchange of

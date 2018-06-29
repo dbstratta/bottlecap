@@ -12,7 +12,7 @@ export const startP2pServer = (port: number): void => {
 
   p2pServer.on('connection', handleConnection);
 
-  logger.info(`p2p node listening on ${port}`);
+  logger.info(`p2p node listening on port ${port}`);
 };
 
 const nodeIdHeader = 'x-node-id';

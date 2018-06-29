@@ -9,7 +9,7 @@ declare module 'elliptic' {
   }
 
   declare class KeyPair {
-    public getPublic(): Point;
+    public getPublic(encoding: Encoding): string;
     public getPrivate(encoding: Encoding): string;
     public sign(data: string): Signature;
     public verify(data: string, signature: string): boolean;
@@ -17,9 +17,5 @@ declare module 'elliptic' {
 
   declare class Signature {
     public toDER(encoding: Encoding): string;
-  }
-
-  declare class Point {
-    public encode(encoding: Encoding): string;
   }
 }

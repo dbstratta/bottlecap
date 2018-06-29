@@ -1,2 +1,7 @@
 export { Wallet } from './types';
-export { getWallet, getPublicKey, sendToAddress, getBalance } from './wallets';
+export { sendToAddress, getBalance } from './wallets';
+export {
+  getCurrentWallet,
+  initializeWallet,
+  saveCurrentWalletToDisk,
+} from './persistance';

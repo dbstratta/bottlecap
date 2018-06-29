@@ -1,4 +1,1 @@
-export {
-  saveActiveBlockchainToDisk,
-  loadActiveBlockchainFromDisk,
-} from './persistance';
+export { loadFromDisk, saveToDisk, initializeFileSystem } from './persistance';

@@ -1,28 +1,20 @@
 import { promises as fs } from 'fs';
+import { promisify } from 'util';
 
-import { Blockchain } from '../blockchains';
+import mkdirpCallback from 'mkdirp';
 
-const ACTIVE_BLOCKCHAIN_LOCATION = '';
+const PERSISTANCE_PATH = 'node_data';
 
-export const saveActiveBlockchainToDisk = (
-  activeBlockchain: Blockchain,
-): Promise<void> =>
-  fs.writeFile(
-    ACTIVE_BLOCKCHAIN_LOCATION,
-    serializeBlockchain(activeBlockchain),
-  );
+const mkdirp: (path: string) => Promise<void> = promisify(mkdirpCallback);
 
-export const loadActiveBlockchainFromDisk = async (): Promise<Blockchain> => {
-  const serializedActiveBlockchain: string = await fs.readFile(
-    ACTIVE_BLOCKCHAIN_LOCATION,
-    'utf8',
-  );
+export const initializeFileSystem = (): Promise<void> =>
+  mkdirp(PERSISTANCE_PATH);
 
-  return deserializeBlockchain(serializedActiveBlockchain);
-};
+export const saveToDisk = (data: string, path: string): Promise<void> =>
+  fs.writeFile(appendPersistancePath(path), data);
 
-const serializeBlockchain = (blockchain: Blockchain): string =>
-  JSON.stringify(blockchain);
+export const loadFromDisk = (path: string): Promise<string> =>
+  fs.readFile(appendPersistancePath(path), 'utf8');
 
-const deserializeBlockchain = (serializedBlockchain: string): Blockchain =>
-  JSON.parse(serializedBlockchain);
+const appendPersistancePath = (path: string): string =>
+  `${PERSISTANCE_PATH}/${path}`;

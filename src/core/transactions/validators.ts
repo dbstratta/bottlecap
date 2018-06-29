@@ -1,4 +1,4 @@
-import { verify } from '../ellipticCurveCrypto';
+import { verify } from '../crypto';
 import { COINBASE_AMOUNT } from './constants';
 import {
   CoinbaseTransactionValidationError,

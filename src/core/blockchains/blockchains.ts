@@ -5,7 +5,7 @@ import {
   genesisBlock,
   validateNewBlock,
 } from '../blocks';
-import { PublicKey } from '../ellipticCurveCrypto';
+import { PublicKey } from '../crypto';
 import logger from '../logger';
 import { getMempool, Mempool, updateMempool } from '../mempool';
 import { broadcastActiveBlockchain } from '../p2p';
@@ -17,7 +17,7 @@ import {
   TxOut,
   updateUnspentTxOuts,
 } from '../transactions';
-import { getPublicKey } from '../wallets';
+import { getCurrentWallet } from '../wallets';
 import {
   getDifficulty,
   getLatestBlock,
@@ -57,9 +57,9 @@ export const maybeReplaceActiveBlockchain = (
 /**
  * Mines the next in the active blockchain.
  */
-export const mineNextBlock = async (): Promise<Block> => {
+export const mineNextBlock = (): Block => {
   const latestBlock = getLatestBlock(activeBlockchain);
-  const minerAddress: PublicKey = await getPublicKey();
+  const minerAddress: PublicKey = getCurrentWallet().defaultKeyPair.publicKey;
   const mempool: Mempool = getMempool();
 
   const index = getNextBlockIndex(latestBlock);

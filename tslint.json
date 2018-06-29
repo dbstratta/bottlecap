@@ -11,7 +11,10 @@
   },
   "rules": {
     "max-classes-per-file": false,
-    "import-name": [true, { "v4": "uuidv4", "ws": "WebSocket" }],
+    "import-name": [
+      true,
+      { "mkdirp": "mkdirpCallback", "v4": "uuidv4", "ws": "WebSocket" }
+    ],
     "object-literal-sort-keys": false,
     "trailing-comma": [true, { "multiline": "always", "singleline": "never" }],
     "interface-over-type-literal": false

@@ -1,6 +1,6 @@
 import { equals } from 'ramda';
 
-import { PrivateKey, sign, Signature } from '../ellipticCurveCrypto';
+import { PrivateKey, sign, Signature } from '../crypto';
 import { genesisUnspentTxOut } from './genesis';
 import {
   CoinbaseTransaction,

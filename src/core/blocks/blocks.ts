@@ -1,4 +1,4 @@
-import { sha256 } from '../helpers';
+import { sha256 } from '../crypto';
 import { DIFFICULTY_ADJUSMENT_INTERVAL } from './constants';
 import {
   hashMatchesDifficulty,

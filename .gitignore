@@ -8,7 +8,7 @@ coverage
 dist
 
 # Misc
-private_key
+node_data
 .env
 *.pyc
 .DS_Store

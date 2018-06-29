@@ -1,8 +1,9 @@
-import { PrivateKey } from '../ellipticCurveCrypto';
+import { KeyPair } from '../crypto';
 
 /**
- * A wallet holds a private key.
+ * A wallet holds a collection of key pairs.
  */
 export type Wallet = {
-  privateKey: PrivateKey;
+  keyPairs: KeyPair[];
+  defaultKeyPair: KeyPair;
 };

@@ -1,4 +1,4 @@
-import { sha256 } from '../helpers';
+import { sha256 } from '../crypto';
 import { Block, BlockData, Nonce } from './types';
 
 /**

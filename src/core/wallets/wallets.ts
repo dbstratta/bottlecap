@@ -1,13 +1,6 @@
-import { promises as fs } from 'fs';
-
 import { equals } from 'ramda';
 
-import {
-  generatePrivateKey,
-  getPublicKeyFromPrivateKey,
-  PrivateKey,
-  PublicKey,
-} from '../ellipticCurveCrypto';
+import { PublicKey } from '../crypto';
 import { addTransactionToMempool, getMempool, Mempool } from '../mempool';
 import {
   getTransactionId,
@@ -21,56 +14,11 @@ import {
 } from '../transactions';
 import { Wallet } from '../wallets';
 import { WalletError } from './errors';
+import { getCurrentWallet } from './persistance';
 
-export const getWallet = async (): Promise<Wallet> => {
-  const persistedWallet = await loadWalletIfExists();
-
-  if (persistedWallet) {
-    return persistedWallet;
-  }
-
-  const newWallet: Wallet = createWallet();
-  await persistWallet(newWallet);
-
-  return newWallet;
-};
-
-const loadWalletIfExists = async (): Promise<Wallet | null> => {
-  try {
-    const wallet = await loadWallet();
-
-    return wallet;
-  } catch {
-    return null;
-  }
-};
-
-const loadWallet = async (): Promise<Wallet> => ({
-  privateKey: await loadPrivateKey(),
-});
-
-const PRIVATE_KEY_LOCATION = 'private_key';
-
-const loadPrivateKey = (): Promise<PrivateKey> =>
-  fs.readFile(PRIVATE_KEY_LOCATION, 'utf8');
-
-const createWallet = (): Wallet => ({
-  privateKey: generatePrivateKey(),
-});
-
-const persistWallet = (wallet: Wallet): Promise<void> =>
-  fs.writeFile(PRIVATE_KEY_LOCATION, wallet.privateKey);
-
-export const getPublicKey = async (): Promise<string> => {
-  const wallet = await getWallet();
-  return getPublicKeyOfWallet(wallet);
-};
-
-const getPublicKeyOfWallet = ({ privateKey }: Wallet): PublicKey =>
-  getPublicKeyFromPrivateKey(privateKey);
-
-export const getBalance = async (): Promise<number> => {
-  const address = await getPublicKey();
+export const getBalance = (): number => {
+  const wallet = getCurrentWallet();
+  const address = wallet.defaultKeyPair.publicKey;
   const unspentTxOut = getUnspentTxOuts();
   const mempool = getMempool();
 
@@ -108,7 +56,7 @@ export const sendToAddress = async (
   toAddress: PublicKey,
   amount: number,
 ): Promise<Transaction> => {
-  const wallet: Wallet = await getWallet();
+  const wallet: Wallet = getCurrentWallet();
   const unspentTxOuts = getUnspentTxOuts();
   const mempool = getMempool();
 
@@ -131,7 +79,7 @@ const createTransaction = (
   unspentTxOuts: UnspentTxOut[],
   mempool: Mempool,
 ): Transaction => {
-  const fromAddress: PublicKey = getPublicKeyOfWallet(wallet);
+  const fromAddress: PublicKey = wallet.defaultKeyPair.publicKey;
   const { outPoints, amountToSendBack } = getOutPointsToSpend(
     fromAddress,
     amount,
@@ -199,5 +147,5 @@ const createTxIns = (
 ): TxIn[] =>
   prevOutPoints.map(prevOutPoint => ({
     prevOutPoint,
-    signature: signTxIn(transactionId, wallet.privateKey),
+    signature: signTxIn(transactionId, wallet.defaultKeyPair.privateKey),
   }));

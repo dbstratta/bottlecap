@@ -1,6 +1,6 @@
 import { equals } from 'ramda';
 
-import { sha256 } from '../helpers';
+import { sha256 } from '../crypto';
 import { OutPoint, TxOut, UnspentTxOut } from './types';
 
 /**
