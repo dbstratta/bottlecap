@@ -1,6 +1,6 @@
 import { ec as EC } from 'elliptic';
 
-import { PrivateKey, PublicKey } from './types';
+import { PrivateKey, PublicKey, Signature } from './types';
 
 const ellipticCurveName = 'secp256k1';
 const ec = new EC(ellipticCurveName);
@@ -28,9 +28,9 @@ export const generatePrivateKey = (): PrivateKey => {
 /**
  * Signs `data` with `privateKey`.
  */
-export const sign = (privateKey: PrivateKey, data: string): string => {
+export const sign = (privateKey: PrivateKey, data: string): Signature => {
   const key = ec.keyFromPrivate(privateKey, 'hex');
-  const signature: string = key.sign(data).toDER('hex');
+  const signature: Signature = key.sign(data).toDER('hex');
 
   return signature;
 };
@@ -41,7 +41,7 @@ export const sign = (privateKey: PrivateKey, data: string): string => {
  */
 export const verify = (
   publicKey: PublicKey,
-  signature: string,
+  signature: Signature,
   data: string,
 ): boolean => {
   const key = ec.keyFromPublic(publicKey, 'hex');

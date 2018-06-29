@@ -1,4 +1,4 @@
-export { PublicKey, PrivateKey } from './types';
+export { PublicKey, PrivateKey, Signature } from './types';
 export {
   generatePrivateKey,
   sign,

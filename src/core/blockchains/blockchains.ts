@@ -28,8 +28,15 @@ import { validateBlockchain } from './validators';
 
 let activeBlockchain: Blockchain = [genesisBlock];
 
+/**
+ * Returns the active blockchain.
+ */
 export const getActiveBlockchain = (): Blockchain => activeBlockchain;
 
+/**
+ * Replaces the active blockchain if the other
+ * blockchain has more cumulative difficulty.
+ */
 export const maybeReplaceActiveBlockchain = (
   blockchain: Blockchain,
 ): Blockchain => {
@@ -47,6 +54,9 @@ export const maybeReplaceActiveBlockchain = (
   return activeBlockchain;
 };
 
+/**
+ * Mines the next in the active blockchain.
+ */
 export const mineNextBlock = async (): Promise<Block> => {
   const latestBlock = getLatestBlock(activeBlockchain);
   const minerAddress: PublicKey = await getPublicKey();
@@ -96,6 +106,10 @@ const getNextCoinbaseTransaction = (
   return { id, blockIndex, txOut };
 };
 
+/**
+ * Adds a block to the active blockchain.
+ * Throws if the block is invalid.
+ */
 export const addBlockToActiveBlockchain = (block: Block): Blockchain => {
   const latestBlock = getLatestBlock(activeBlockchain);
   const unspentTxOuts = getUnspentTxOuts();

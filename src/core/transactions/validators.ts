@@ -19,6 +19,17 @@ export const validateTransaction = (
   validateTransactionTxIns(transaction, unspentTxOuts);
 };
 
+const validateTransactionId = (transaction: Transaction): void => {
+  const expectedTransactionId = getTransactionId(
+    transaction.txIns.map(txIn => txIn.prevOutPoint),
+    transaction.txOuts,
+  );
+
+  if (transaction.id !== expectedTransactionId) {
+    throw new TransactionValidationError('invalid transaction ID');
+  }
+};
+
 const validateTransactionTxIns = (
   transaction: Transaction,
   unspentTxOuts: UnspentTxOut[],
@@ -43,17 +54,6 @@ export const validateTxIn = (
 
   if (!verify(address, txIn.signature, transaction.id)) {
     throw new TransactionValidationError('invalid transaction txIn signature');
-  }
-};
-
-export const validateTransactionId = (transaction: Transaction): void => {
-  const expectedTransactionId = getTransactionId(
-    transaction.txIns.map(txIn => txIn.prevOutPoint),
-    transaction.txOuts,
-  );
-
-  if (transaction.id !== expectedTransactionId) {
-    throw new TransactionValidationError('invalid transaction ID');
   }
 };
 
