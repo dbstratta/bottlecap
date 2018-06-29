@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 const React = require('react');
 
 class Footer extends React.Component {
