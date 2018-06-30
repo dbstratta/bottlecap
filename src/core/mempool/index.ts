@@ -1,2 +1,3 @@
 export { Mempool } from './types';
-export { updateMempool, getMempool, addTransactionToMempool } from './mempool';
+export { updateMempool, addTransactionToMempool } from './mempool';
+export { getMempool, initializeMempool } from './persistance';

@@ -2,6 +2,9 @@ import { initializeNode } from './core';
 import logger from './core/logger';
 import { startServer } from './server/server';
 
+/**
+ * Entry point of the application.
+ */
 export const main = async () => {
   handleUnhandledExceptions();
 

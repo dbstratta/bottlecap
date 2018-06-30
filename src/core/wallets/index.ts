@@ -1,5 +1,9 @@
 export { Wallet } from './types';
-export { sendToAddress, getBalance } from './wallets';
+export {
+  getBalanceOfCurrentWallet,
+  getConfirmedBalanceOfCurrentWallet,
+} from './wallets';
+export { sendToAddress } from './transactionSending';
 export {
   getCurrentWallet,
   initializeWallet,

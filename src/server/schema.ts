@@ -4,7 +4,12 @@ import { getActiveBlockchain, mineNextBlock } from '../core/blockchains';
 import { Block } from '../core/blocks';
 import { getPeers } from '../core/p2p';
 import { Transaction } from '../core/transactions';
-import { getBalance, getCurrentWallet, sendToAddress } from '../core/wallets';
+import {
+  getBalanceOfCurrentWallet,
+  getConfirmedBalanceOfCurrentWallet,
+  getCurrentWallet,
+  sendToAddress,
+} from '../core/wallets';
 
 export const typeDefs = gql`
   type Query {
@@ -14,8 +19,9 @@ export const typeDefs = gql`
   }
 
   type Wallet {
-    addresses: [String!]!
+    address: String!
     balance: Int!
+    confirmedBalance: Int!
   }
 
   type Blockchain {
@@ -102,8 +108,9 @@ const resolveSendToAddress = (
 export const resolvers = {
   Query: {
     wallet: () => ({
-      addresses: getCurrentWallet().keyPairs.map(keyPair => keyPair.publicKey),
-      balance: getBalance(),
+      address: getCurrentWallet().keyPair.publicKey,
+      balance: getBalanceOfCurrentWallet(),
+      confirmedBalance: getConfirmedBalanceOfCurrentWallet(),
     }),
     activeBlockchain: () => ({
       blocks: {

@@ -7,38 +7,44 @@ import {
   Transaction,
   validateTransaction,
 } from '../transactions';
+import { getMempool, setMempool } from './persistance';
 import { Mempool } from './types';
 import { validateTransactionForMempool } from './validators';
 
-const mempool: Mempool = {
-  transactions: [],
-};
-
-export const getMempool = (): Mempool => mempool;
-
 export const addTransactionToMempool = (transaction: Transaction): Mempool => {
+  const mempool = getMempool();
   const unspentTxOuts = getUnspentTxOuts();
 
   validateTransaction(transaction, unspentTxOuts);
   validateTransactionForMempool(transaction, mempool);
 
-  mempool.transactions = [...mempool.transactions, transaction];
+  const newMempool: Mempool = {
+    transactions: [...mempool.transactions, transaction],
+  };
+  setMempool(newMempool);
   broadcastTransaction(transaction);
 
-  return mempool;
+  return newMempool;
 };
 
 export const updateMempool = (
   confirmedTransactions: Transaction[],
 ): Mempool => {
+  const mempool = getMempool();
   const spentOutPoints: OutPoint[] = getSpentOutPoints(confirmedTransactions);
 
-  mempool.transactions = mempool.transactions.filter(
+  const newMempoolTransactions = mempool.transactions.filter(
     mempoolTransaction =>
       !usesSpentOutPoint(mempoolTransaction, spentOutPoints),
   );
 
-  return mempool;
+  const newMempool: Mempool = {
+    ...mempool,
+    transactions: newMempoolTransactions,
+  };
+  setMempool(newMempool);
+
+  return newMempool;
 };
 
 const getSpentOutPoints = (transactions: Transaction[]): OutPoint[] =>

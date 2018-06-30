@@ -59,7 +59,7 @@ export const maybeReplaceActiveBlockchain = (
  */
 export const mineNextBlock = (): Block => {
   const latestBlock = getLatestBlock(activeBlockchain);
-  const minerAddress: PublicKey = getCurrentWallet().defaultKeyPair.publicKey;
+  const minerAddress: PublicKey = getCurrentWallet().keyPair.publicKey;
   const mempool: Mempool = getMempool();
 
   const index = getNextBlockIndex(latestBlock);
