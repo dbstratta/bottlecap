@@ -1,4 +1,4 @@
-FROM node:10.4.1
+FROM node:10.5.0
 
 WORKDIR /usr/src/app
 
@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 4000
 
-CMD ["yarn", "start"]
+CMD ["yarn", "start:dev"]

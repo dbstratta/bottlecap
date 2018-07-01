@@ -8,16 +8,23 @@ export type Message = {
   content: any;
 };
 
+export type ServerInfo = {
+  id: string;
+  url: string;
+};
+
 export enum MessageType {
   QueryActiveBlockchain = 'QUERY_ACTIVE_BLOCKCHAIN',
   QueryLatestBlock = 'QUERY_LATEST_BLOCK',
   QueryMempool = 'QUERY_MEMPOOL',
+  QueryPeers = 'QUERY_PEERS',
 
-  SendServerId = 'SEND_SERVER_ID',
+  SendServerInfo = 'SEND_SERVER_INFO',
   SendActiveBlockchain = 'SEND_ACTIVE_BLOCKCHAIN',
   SendLatestBlock = 'SEND_LATEST_BLOCK',
   SendTransaction = 'SEND_TRANSACTION',
   SendMempool = 'SEND_MEMPOOL',
+  SendPeers = 'SEND_PEERS',
 }
 
 export const parseMessage = (data: string): Message | null => {
@@ -43,9 +50,16 @@ export const createQueryMempoolMessage = (): Message => ({
   content: null,
 });
 
-export const createSendServerIdMessage = (serverId: string): Message => ({
-  type: MessageType.SendServerId,
-  content: serverId,
+export const createQueryPeersMessage = (): Message => ({
+  type: MessageType.QueryPeers,
+  content: null,
+});
+
+export const createSendServerInfoMessage = (
+  serverInfo: ServerInfo,
+): Message => ({
+  type: MessageType.SendServerInfo,
+  content: serverInfo,
 });
 
 export const createSendActiveBlockchainMessage = (
@@ -70,4 +84,9 @@ export const createSendTransactionMessage = (
 export const createSendMempoolMessage = (mempool: Mempool): Message => ({
   type: MessageType.SendMempool,
   content: mempool,
+});
+
+export const createSendPeersMessage = (peerUrls: string[]): Message => ({
+  type: MessageType.SendPeers,
+  content: peerUrls,
 });

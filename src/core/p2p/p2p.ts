@@ -1,27 +1,30 @@
 import http from 'http';
 
 import WebSocket from 'ws';
-
 import logger from '../logger';
+import { nodeId, nodeIdHeader, nodeUrl, nodeUrlHeader } from './constants';
 import { handleClose, handleMessage } from './handlers';
-import { createSendServerIdMessage } from './messages';
-import { addPeer, nodeId, sendMessageToSocket } from './peers';
+import { createSendServerInfoMessage, ServerInfo } from './messages';
+import { addPeer, sendMessageToSocket } from './peers';
 
 export const startP2pServer = (port: number): void => {
-  const p2pServer = new WebSocket.Server({ port });
+  const p2pServerOptions: WebSocket.ServerOptions = {
+    port,
+    clientTracking: false,
+  };
+  const p2pServer = new WebSocket.Server(p2pServerOptions);
 
   p2pServer.on('connection', handleConnection);
 
   logger.info(`p2p node listening on port ${port}`);
 };
 
-const nodeIdHeader = 'x-node-id';
-
 export const handleConnection = (
   ws: WebSocket,
   req: http.IncomingMessage,
 ): void => {
-  const clientId = req.headers[nodeIdHeader];
+  const clientId = req.headers[nodeIdHeader] as string;
+  const clientUrl = req.headers[nodeUrlHeader] as string;
 
   if (!isNodeIdValid(clientId)) {
     ws.close();
@@ -29,24 +32,17 @@ export const handleConnection = (
   }
 
   try {
-    addPeer(ws, clientId as string);
+    addPeer(ws, clientId, clientUrl);
   } catch (e) {
     logger.error(e);
     return;
   }
 
-  sendMessageToSocket(ws, createSendServerIdMessage(nodeId));
-
   ws.on('message', (data: string) => handleMessage(ws, data));
-  ws.on('close', () => handleClose(ws));
+  ws.on('close', handleClose);
+
+  const serverInfo: ServerInfo = { id: nodeId, url: nodeUrl };
+  sendMessageToSocket(ws, createSendServerInfoMessage(serverInfo));
 };
 
 const isNodeIdValid = (id: any): boolean => typeof id === 'string';
-
-export const connectToPeer = (peerUrl: string): void => {
-  const headers = { [nodeIdHeader]: nodeId };
-  const ws: WebSocket = new WebSocket(peerUrl, { headers });
-
-  ws.on('message', handleMessage);
-  ws.on('close', handleClose);
-};

@@ -4,7 +4,7 @@ import { PublicKey } from '../crypto';
 import { getMempool, Mempool } from '../mempool';
 import { getUnspentTxOuts, UnspentTxOut } from '../transactions';
 import { isUnspentTxOutsOfAddress, usesOutPointInMempool } from './helpers';
-import { getCurrentWallet } from './persistance';
+import { getCurrentWallet } from './persistence';
 
 export const getBalanceOfCurrentWallet = (): number => {
   const wallet = getCurrentWallet();

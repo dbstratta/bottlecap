@@ -7,7 +7,7 @@ import {
   Transaction,
   validateTransaction,
 } from '../transactions';
-import { getMempool, setMempool } from './persistance';
+import { getMempool, setMempool } from './persistence';
 import { Mempool } from './types';
 import { validateTransactionForMempool } from './validators';
 

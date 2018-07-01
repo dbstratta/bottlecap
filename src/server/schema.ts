@@ -2,7 +2,7 @@ import { gql } from 'apollo-server';
 
 import { getActiveBlockchain, mineNextBlock } from '../core/blockchains';
 import { Block } from '../core/blocks';
-import { getPeers } from '../core/p2p';
+import { connectToPeer, getPeers } from '../core/p2p';
 import { Transaction } from '../core/transactions';
 import {
   getBalanceOfCurrentWallet,
@@ -97,6 +97,7 @@ export const typeDefs = gql`
   type Mutation {
     mineBlock: Block!
     sendToAddress(address: String!, amount: Int!): Transaction!
+    addPeer(url: String!): Boolean!
   }
 `;
 
@@ -122,5 +123,6 @@ export const resolvers = {
   Mutation: {
     mineBlock: (): Block => mineNextBlock(),
     sendToAddress: resolveSendToAddress,
+    addPeer: (rootValue: any, args: any): boolean => !!connectToPeer(args.url),
   },
 };

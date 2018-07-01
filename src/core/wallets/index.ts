@@ -8,4 +8,4 @@ export {
   getCurrentWallet,
   initializeWallet,
   saveCurrentWalletToDisk,
-} from './persistance';
+} from './persistence';

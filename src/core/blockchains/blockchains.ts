@@ -8,7 +8,7 @@ import {
 import { PublicKey } from '../crypto';
 import logger from '../logger';
 import { getMempool, Mempool, updateMempool } from '../mempool';
-import { broadcastActiveBlockchain } from '../p2p';
+import { broadcastActiveBlockchain, broadcastLatestBlock } from '../p2p';
 import {
   COINBASE_AMOUNT,
   CoinbaseTransaction,
@@ -69,9 +69,9 @@ export const mineNextBlock = (): Block => {
   const difficulty = getDifficulty(activeBlockchain);
 
   const block = findBlock({ index, data, prevHash, timestamp, difficulty });
+  logger.info(`Block ${block.index} mined!`);
 
   addBlockToActiveBlockchain(block);
-  logger.info(`Block ${block.index} mined!`);
 
   return block;
 };
@@ -119,7 +119,8 @@ export const addBlockToActiveBlockchain = (block: Block): Blockchain => {
   activeBlockchain = [...activeBlockchain, block];
   updateUnspentTxOuts(block.data.coinbaseTransaction, block.data.transactions);
   updateMempool(block.data.transactions);
-  broadcastActiveBlockchain(activeBlockchain);
+  broadcastLatestBlock(block);
+  logger.info(`Block ${block.index} broadcast`);
 
   return activeBlockchain;
 };

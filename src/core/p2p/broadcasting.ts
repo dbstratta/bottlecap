@@ -4,10 +4,11 @@ import { Transaction } from '../transactions';
 import {
   createSendActiveBlockchainMessage,
   createSendLatestBlockMessage,
+  createSendPeersMessage,
   createSendTransactionMessage,
   Message,
 } from './messages';
-import { getPeers, sendMessageToSocket } from './peers';
+import { getPeers, Peer, sendMessageToSocket } from './peers';
 
 export const broadcastLatestBlock = (latestBlock: Block) => {
   broadcast(createSendLatestBlockMessage(latestBlock));
@@ -21,6 +22,11 @@ export const broadcastActiveBlockchain = (
 
 export const broadcastTransaction = (transaction: Transaction): void => {
   broadcast(createSendTransactionMessage(transaction));
+};
+
+export const broadcastPeerUrls = (peers: Peer[]): void => {
+  const peerUrls: string[] = peers.map(peer => peer.url);
+  broadcast(createSendPeersMessage(peerUrls));
 };
 
 const broadcast = (message: Message): void =>

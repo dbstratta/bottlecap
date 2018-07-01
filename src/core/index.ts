@@ -1,9 +1,9 @@
 import { initializeMempool } from './mempool';
 import { startP2pServer } from './p2p';
-import { initializeFileSystem } from './persistance';
+import { initializeFileSystem } from './persistence';
 import { initializeWallet } from './wallets';
 
-const P2P_SERVER_PORT = 4100;
+const P2P_SERVER_PORT = parseInt(process.env.P2P_SERVER_PORT || '4100', 10);
 
 /**
  * Initializes node internal state

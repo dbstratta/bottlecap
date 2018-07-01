@@ -1,4 +1,4 @@
-import { loadFromDisk, saveToDisk } from '../persistance';
+import { loadFromDisk, saveToDisk } from '../persistence';
 import { Mempool } from './types';
 
 let mempool: Mempool = {

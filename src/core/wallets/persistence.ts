@@ -1,4 +1,4 @@
-import { loadFromDisk, saveToDisk } from '../persistance';
+import { loadFromDisk, saveToDisk } from '../persistence';
 import { WalletError } from './errors';
 import { createWallet } from './helpers';
 import { Wallet } from './types';

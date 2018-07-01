@@ -13,7 +13,7 @@ import {
 } from '../transactions';
 import { WalletError } from './errors';
 import { isUnspentTxOutsOfAddress, usesOutPointInMempool } from './helpers';
-import { getCurrentWallet } from './persistance';
+import { getCurrentWallet } from './persistence';
 import { Wallet } from './types';
 
 /**
@@ -126,7 +126,7 @@ const createTxIns = (
 
 const sendTransaction = (transaction: Transaction): Transaction => {
   addTransactionToMempool(transaction);
-  logger.info(`transaction ${transaction.id} sent`);
+  logger.info(`Transaction ${transaction.id} sent`);
 
   return transaction;
 };
