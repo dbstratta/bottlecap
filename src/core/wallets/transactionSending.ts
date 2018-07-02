@@ -1,5 +1,4 @@
 import { PublicKey } from '../crypto';
-import logger from '../logger';
 import { addTransactionToMempool, getMempool, Mempool } from '../mempool';
 import {
   getTransactionId,
@@ -126,7 +125,5 @@ const createTxIns = (
 
 const sendTransaction = (transaction: Transaction): Transaction => {
   addTransactionToMempool(transaction);
-  logger.info(`Transaction ${transaction.id} sent`);
-
   return transaction;
 };

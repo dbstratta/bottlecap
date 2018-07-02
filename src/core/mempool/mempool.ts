@@ -1,6 +1,6 @@
 import { equals } from 'ramda';
 
-import { broadcastTransaction } from '../p2p';
+import { broadcastTransaction } from '../broadcasting';
 import {
   getUnspentTxOuts,
   OutPoint,
@@ -22,6 +22,7 @@ export const addTransactionToMempool = (transaction: Transaction): Mempool => {
     transactions: [...mempool.transactions, transaction],
   };
   setMempool(newMempool);
+
   broadcastTransaction(transaction);
 
   return newMempool;

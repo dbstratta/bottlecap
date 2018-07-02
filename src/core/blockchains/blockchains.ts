@@ -5,10 +5,13 @@ import {
   genesisBlock,
   validateNewBlock,
 } from '../blocks';
+import {
+  broadcastActiveBlockchain,
+  broadcastLatestBlock,
+} from '../broadcasting';
 import { PublicKey } from '../crypto';
 import logger from '../logger';
 import { getMempool, Mempool, updateMempool } from '../mempool';
-import { broadcastActiveBlockchain, broadcastLatestBlock } from '../p2p';
 import {
   COINBASE_AMOUNT,
   CoinbaseTransaction,
@@ -46,6 +49,8 @@ export const maybeReplaceActiveBlockchain = (
 
   if (hasMoreCumulativeDifficulty(blockchain, activeBlockchain)) {
     activeBlockchain = blockchain;
+
+    logger.info(`Active blockchain replaced`);
     broadcastActiveBlockchain(activeBlockchain);
 
     return activeBlockchain;
@@ -69,7 +74,7 @@ export const mineNextBlock = (): Block => {
   const difficulty = getDifficulty(activeBlockchain);
 
   const block = findBlock({ index, data, prevHash, timestamp, difficulty });
-  logger.info(`Block ${block.index} mined!`);
+  logger.info(`Block with index ${block.index} mined!`);
 
   addBlockToActiveBlockchain(block);
 
@@ -117,10 +122,12 @@ export const addBlockToActiveBlockchain = (block: Block): Blockchain => {
   validateNewBlock(block, latestBlock, unspentTxOuts);
 
   activeBlockchain = [...activeBlockchain, block];
+  logger.info(`Block with index ${block.index} added to active blockchain`);
+
   updateUnspentTxOuts(block.data.coinbaseTransaction, block.data.transactions);
   updateMempool(block.data.transactions);
+
   broadcastLatestBlock(block);
-  logger.info(`Block ${block.index} broadcast`);
 
   return activeBlockchain;
 };

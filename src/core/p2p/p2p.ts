@@ -1,14 +1,25 @@
 import http from 'http';
 
 import WebSocket from 'ws';
+
 import logger from '../logger';
-import { nodeId, nodeIdHeader, nodeUrl, nodeUrlHeader } from './constants';
-import { handleClose, handleMessage } from './handlers';
-import { createSendServerInfoMessage, ServerInfo } from './messages';
-import { addPeer, sendMessageToSocket } from './peers';
+import {
+  createSendServerInfoMessage,
+  handleClose,
+  handleMessage,
+  ServerInfo,
+} from '../messages';
+import { addPeer, sendMessageToSocket } from '../peers';
+import {
+  nodeId,
+  nodeIdHeader,
+  nodeUrl,
+  nodeUrlHeader,
+} from '../peers/constants';
 
 export const startP2pServer = (port: number): void => {
   const p2pServerOptions: WebSocket.ServerOptions = {
+    verifyClient,
     port,
     clientTracking: false,
   };
@@ -19,17 +30,9 @@ export const startP2pServer = (port: number): void => {
   logger.info(`p2p node listening on port ${port}`);
 };
 
-export const handleConnection = (
-  ws: WebSocket,
-  req: http.IncomingMessage,
-): void => {
+const handleConnection = (ws: WebSocket, req: http.IncomingMessage): void => {
   const clientId = req.headers[nodeIdHeader] as string;
   const clientUrl = req.headers[nodeUrlHeader] as string;
-
-  if (!isNodeIdValid(clientId)) {
-    ws.close();
-    return;
-  }
 
   try {
     addPeer(ws, clientId, clientUrl);
@@ -45,4 +48,20 @@ export const handleConnection = (
   sendMessageToSocket(ws, createSendServerInfoMessage(serverInfo));
 };
 
+const verifyClient: WebSocket.VerifyClientCallbackSync = info => {
+  const clientId = info.req.headers[nodeIdHeader] as string;
+  const clientUrl = info.req.headers[nodeUrlHeader] as string;
+
+  if (!isNodeIdValid(clientId)) {
+    return false;
+  }
+
+  if (!isNodeUrlValid(clientUrl)) {
+    return false;
+  }
+
+  return true;
+};
+
 const isNodeIdValid = (id: any): boolean => typeof id === 'string';
+const isNodeUrlValid = (url: any): boolean => typeof url === 'string';

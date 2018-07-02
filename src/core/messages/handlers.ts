@@ -11,19 +11,23 @@ import { Block } from '../blocks';
 import { tryOrLogError } from '../helpers';
 import logger from '../logger';
 import { addTransactionToMempool, getMempool, Mempool } from '../mempool';
+import {
+  addPeer,
+  connectToPeer,
+  getPeerBySocket,
+  nodeId,
+  removePeer,
+  sendMessageToSocket,
+} from '../peers';
 import { Transaction } from '../transactions';
-import { connectToPeer } from './helpers';
 import {
   createQueryActiveBlockchainMessage,
   createSendActiveBlockchainMessage,
   createSendLatestBlockMessage,
   createSendMempoolMessage,
-  Message,
-  MessageType,
   parseMessage,
-  ServerInfo,
 } from './messages';
-import { addPeer, removePeer, sendMessageToSocket } from './peers';
+import { Message, MessageType, ServerInfo } from './types';
 
 export const handleMessage = (ws: WebSocket, data: string): void => {
   const message: Message | null = parseMessage(data);
@@ -32,14 +36,20 @@ export const handleMessage = (ws: WebSocket, data: string): void => {
     return;
   }
 
-  if (message.type === MessageType.SendServerInfo) {
-    handleSendServerInfo(ws, message);
-  } else if (message.type === MessageType.QueryActiveBlockchain) {
+  const peer = getPeerBySocket(ws);
+
+  if (peer && peer.id === nodeId) {
+    return;
+  }
+
+  if (message.type === MessageType.QueryActiveBlockchain) {
     handleQueryActiveBlockchain(ws);
   } else if (message.type === MessageType.QueryLatestBlock) {
     handleQueryLatestBlock(ws);
   } else if (message.type === MessageType.QueryMempool) {
     handleQueryMempool(ws);
+  } else if (message.type === MessageType.SendServerInfo) {
+    handleSendServerInfo(ws, message);
   } else if (message.type === MessageType.SendActiveBlockchain) {
     handleSendActiveBlockchain(ws, message);
   } else if (message.type === MessageType.SendLatestBlock) {
@@ -51,11 +61,6 @@ export const handleMessage = (ws: WebSocket, data: string): void => {
   } else if (message.type === MessageType.SendPeers) {
     handleSendPeers(ws, message);
   }
-};
-
-const handleSendServerInfo = (ws: WebSocket, message: Message): void => {
-  const serverInfo: ServerInfo = message.content;
-  tryOrLogError(() => addPeer(ws, serverInfo.id, serverInfo.url));
 };
 
 const handleQueryActiveBlockchain = (ws: WebSocket): void => {
@@ -73,15 +78,22 @@ const handleQueryMempool = (ws: WebSocket): void => {
   sendMessageToSocket(ws, createSendMempoolMessage(mempool));
 };
 
+const handleSendServerInfo = (ws: WebSocket, message: Message): void => {
+  const serverInfo: ServerInfo = message.content;
+  tryOrLogError(() => addPeer(ws, serverInfo.id, serverInfo.url));
+};
+
 const handleSendActiveBlockchain = (ws: WebSocket, message: Message): void => {
   const receivedActiveBlockchain: Blockchain = message.content;
-  logger.info(`Received blockchain`);
+  logger.info(
+    `Blockchain with length ${receivedActiveBlockchain.length} received`,
+  );
   maybeReplaceActiveBlockchain(receivedActiveBlockchain);
 };
 
 const handleSendLatestBlock = (ws: WebSocket, message: Message): void => {
   const receivedLatestBlock: Block = message.content;
-  logger.info(`Received block ${receivedLatestBlock.index}`);
+  logger.info(`Block with index ${receivedLatestBlock.index} received`);
 
   const activeBlockchain = getActiveBlockchain();
   const latestBlock = getLatestBlock(activeBlockchain);
@@ -100,7 +112,7 @@ const handleSendMempool = (ws: WebSocket, message: Message): void => {
 
 const handleSendTransaction = (ws: WebSocket, message: Message): void => {
   const transaction: Transaction = message.content;
-  logger.info(`Transaction ${transaction.id} received`);
+  logger.info(`Transaction with id ${transaction.id} received`);
 
   maybeAddTransactionToMempool(transaction);
 };
@@ -114,5 +126,11 @@ const handleSendPeers = (ws: WebSocket, message: Message): void => {
 };
 
 export const handleClose = (ws: WebSocket): void => {
-  removePeer(ws);
+  const peer = getPeerBySocket(ws);
+
+  if (!peer) {
+    return;
+  }
+
+  removePeer(peer);
 };

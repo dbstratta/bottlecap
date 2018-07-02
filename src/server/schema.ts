@@ -2,7 +2,7 @@ import { gql } from 'apollo-server';
 
 import { getActiveBlockchain, mineNextBlock } from '../core/blockchains';
 import { Block } from '../core/blocks';
-import { connectToPeer, getPeers } from '../core/p2p';
+import { connectToPeer, getPeers } from '../core/peers';
 import { Transaction } from '../core/transactions';
 import {
   getBalanceOfCurrentWallet,
