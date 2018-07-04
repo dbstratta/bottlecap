@@ -1,9 +1,11 @@
 import { createLogger, format, transports } from 'winston';
 
+import { env } from '../config';
+
 export type LogLevel = 'info' | 'warn' | 'error';
 
 const logger = createLogger({
-  level: process.env.LOG_LEVEL,
+  level: env.logLevel,
   format: format.combine(format.colorize(), format.simple()),
   transports: [new transports.Console()],
 });

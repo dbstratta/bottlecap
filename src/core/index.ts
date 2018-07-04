@@ -1,9 +1,10 @@
+import { env } from '../config';
 import { initializeMempool } from './mempool';
 import { startP2pServer } from './p2p';
 import { initializeFileSystem } from './persistence';
 import { initializeWallet } from './wallets';
 
-const P2P_SERVER_PORT = parseInt(process.env.P2P_SERVER_PORT || '4100', 10);
+const { p2pServerPort } = env;
 
 /**
  * Initializes node internal state
@@ -15,5 +16,5 @@ export const initializeNode = async (): Promise<void> => {
   await initializeMempool();
   await initializeWallet();
 
-  startP2pServer(P2P_SERVER_PORT);
+  startP2pServer(p2pServerPort);
 };

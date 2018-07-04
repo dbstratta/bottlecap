@@ -18,6 +18,10 @@ export type Block = {
    */
   readonly prevHash: string;
   readonly hash: string;
+  /**
+   * The timestamp when the miner started to mine
+   * this block.
+   */
   readonly timestamp: number;
   /**
    * The difficulty (amount of work) of the hash of the block.
@@ -31,7 +35,7 @@ export type BlockData = {
 };
 
 /**
- * The arguments to be passed to `findBlock`.
+ * The arguments to be passed to the function `findBlock`.
  */
 export type FindBlockArgs = {
   readonly index: number;

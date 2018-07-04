@@ -1,7 +1,7 @@
 import { PublicKey, Signature } from '../crypto';
 
 /**
- * A `Transaction` is an interchange of
+ * A transaction is an interchange of
  * Bottlecaps between two parties.
  */
 export type Transaction = {
@@ -14,12 +14,15 @@ export type Transaction = {
   readonly txOuts: TxOut[];
 };
 
+/**
+ * A transaction input.
+ */
 export type TxIn = {
   readonly prevOutPoint: OutPoint;
   /**
-   * The signature of the `prevOutPoint`
-   * of the `TxIn` signed by the creator
-   * of the `Transaction`.
+   * The signature of the previous out point
+   * of the transaction input signed by the creator
+   * of the transaction.
    */
   readonly signature: Signature;
 };
@@ -40,6 +43,9 @@ export type OutPoint = {
   readonly txOutIndex: number;
 };
 
+/**
+ * A transaction output.
+ */
 export type TxOut = {
   readonly address: PublicKey;
   readonly amount: number;
@@ -47,7 +53,7 @@ export type TxOut = {
 
 /**
  * An `UnspentTxOut` points to a `TxOut`
- * that hasn't been spended yet.
+ * that hasn't been spent yet.
  */
 export type UnspentTxOut = {
   readonly outPoint: OutPoint;
@@ -56,11 +62,17 @@ export type UnspentTxOut = {
 };
 
 /**
- * A `CoinbaseTransaction` is the transaction
+ * A coinbase transaction is the transaction
  * that rewards the miner for mining the block.
+ *
+ * It has no transaction inputs and only one
+ * transaction output.
  */
 export type CoinbaseTransaction = {
   readonly id: string;
+  /**
+   * The index of the block in the blockchain.
+   */
   readonly blockIndex: number;
   readonly txOut: TxOut;
 };

@@ -43,7 +43,7 @@ const defaultBroadcastingOptions: BroadcastOptions = {
 
 const broadcast = (
   message: Message,
-  options: BroadcastOptions | undefined = defaultBroadcastingOptions,
+  options: BroadcastOptions = defaultBroadcastingOptions,
 ): void => {
   getPeers().forEach(peer => sendMessageToSocket(peer.socket, message));
 

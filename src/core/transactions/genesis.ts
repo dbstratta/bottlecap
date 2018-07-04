@@ -17,7 +17,7 @@ const genesisCoinbaseTransactionId = getCoinbaseTransactionId(
 );
 
 /**
- * The first `CoinbaseTransaction`.
+ * The first coinbase transaction.
  */
 export const genesisCoinbaseTransaction: CoinbaseTransaction = {
   id: genesisCoinbaseTransactionId,
