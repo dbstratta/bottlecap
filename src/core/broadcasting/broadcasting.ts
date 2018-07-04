@@ -4,7 +4,7 @@ import logger from '../logger';
 import {
   createSendActiveBlockchainMessage,
   createSendLatestBlockMessage,
-  createSendPeersMessage,
+  createSendPeerUrlsMessage,
   createSendTransactionMessage,
   Message,
 } from '../messages';
@@ -34,7 +34,7 @@ export const broadcastTransaction = (transaction: Transaction): void => {
 
 export const broadcastPeerUrls = (peers: Peer[]): void => {
   const peerUrls: string[] = peers.map(peer => peer.url);
-  broadcast(createSendPeersMessage(peerUrls));
+  broadcast(createSendPeerUrlsMessage(peerUrls));
 };
 
 const defaultBroadcastingOptions: BroadcastOptions = {

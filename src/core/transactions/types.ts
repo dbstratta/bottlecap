@@ -9,19 +9,19 @@ export type Transaction = {
    * The ID of a transaction is the hash
    * of its content.
    */
-  id: string;
-  txIns: TxIn[];
-  txOuts: TxOut[];
+  readonly id: string;
+  readonly txIns: TxIn[];
+  readonly txOuts: TxOut[];
 };
 
 export type TxIn = {
-  prevOutPoint: OutPoint;
+  readonly prevOutPoint: OutPoint;
   /**
    * The signature of the `prevOutPoint`
    * of the `TxIn` signed by the creator
    * of the `Transaction`.
    */
-  signature: Signature;
+  readonly signature: Signature;
 };
 
 /**
@@ -32,17 +32,17 @@ export type OutPoint = {
   /**
    * The ID of the transaction the OutPoint points to.
    */
-  txId: string;
+  readonly txId: string;
   /**
    * The index of the TxOut in the transaction
    * the OutPoint points to.
    */
-  txOutIndex: number;
+  readonly txOutIndex: number;
 };
 
 export type TxOut = {
-  address: PublicKey;
-  amount: number;
+  readonly address: PublicKey;
+  readonly amount: number;
 };
 
 /**
@@ -50,9 +50,9 @@ export type TxOut = {
  * that hasn't been spended yet.
  */
 export type UnspentTxOut = {
-  outPoint: OutPoint;
-  address: PublicKey;
-  amount: number;
+  readonly outPoint: OutPoint;
+  readonly address: PublicKey;
+  readonly amount: number;
 };
 
 /**
@@ -60,7 +60,7 @@ export type UnspentTxOut = {
  * that rewards the miner for mining the block.
  */
 export type CoinbaseTransaction = {
-  id: string;
-  blockIndex: number;
-  txOut: TxOut;
+  readonly id: string;
+  readonly blockIndex: number;
+  readonly txOut: TxOut;
 };

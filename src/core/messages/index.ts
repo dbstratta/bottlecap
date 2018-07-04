@@ -3,11 +3,11 @@ export {
   createQueryActiveBlockchainMessage,
   createQueryLatestBlockMessage,
   createQueryMempoolMessage,
-  createQueryPeersMessage,
+  createQueryPeerUrlsMessage,
   createSendActiveBlockchainMessage,
   createSendLatestBlockMessage,
   createSendMempoolMessage,
-  createSendPeersMessage,
+  createSendPeerUrlsMessage,
   createSendServerInfoMessage,
   createSendTransactionMessage,
 } from './messages';

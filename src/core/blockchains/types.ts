@@ -1,3 +1,3 @@
 import { Block } from '../blocks';
 
-export type Blockchain = Block[];
+export type Blockchain = ReadonlyArray<Block>;

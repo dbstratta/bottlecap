@@ -1,3 +1,3 @@
 export type BroadcastOptions = {
-  logString: string | null;
+  readonly logString: string | null;
 };

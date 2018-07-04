@@ -27,7 +27,17 @@ import {
   createSendMempoolMessage,
   parseMessage,
 } from './messages';
-import { Message, MessageType, ServerInfo } from './types';
+import {
+  Message,
+  MessageType,
+  SendActiveBlockchainMessage,
+  SendLatestBlockMessage,
+  SendMempoolMessage,
+  SendPeerUrlsMessage,
+  SendServerInfoMessage,
+  SendTransactionMessage,
+  ServerInfo,
+} from './types';
 
 export const handleMessage = (ws: WebSocket, data: string): void => {
   const message: Message | null = parseMessage(data);
@@ -58,8 +68,8 @@ export const handleMessage = (ws: WebSocket, data: string): void => {
     handleSendMempool(ws, message);
   } else if (message.type === MessageType.SendTransaction) {
     handleSendTransaction(ws, message);
-  } else if (message.type === MessageType.SendPeers) {
-    handleSendPeers(ws, message);
+  } else if (message.type === MessageType.SendPeerUrls) {
+    handleSendPeerUrls(ws, message);
   }
 };
 
@@ -78,12 +88,18 @@ const handleQueryMempool = (ws: WebSocket): void => {
   sendMessageToSocket(ws, createSendMempoolMessage(mempool));
 };
 
-const handleSendServerInfo = (ws: WebSocket, message: Message): void => {
+const handleSendServerInfo = (
+  ws: WebSocket,
+  message: SendServerInfoMessage,
+): void => {
   const serverInfo: ServerInfo = message.content;
   tryOrLogError(() => addPeer(ws, serverInfo.id, serverInfo.url));
 };
 
-const handleSendActiveBlockchain = (ws: WebSocket, message: Message): void => {
+const handleSendActiveBlockchain = (
+  ws: WebSocket,
+  message: SendActiveBlockchainMessage,
+): void => {
   const receivedActiveBlockchain: Blockchain = message.content;
   logger.info(
     `Blockchain with length ${receivedActiveBlockchain.length} received`,
@@ -91,7 +107,10 @@ const handleSendActiveBlockchain = (ws: WebSocket, message: Message): void => {
   maybeReplaceActiveBlockchain(receivedActiveBlockchain);
 };
 
-const handleSendLatestBlock = (ws: WebSocket, message: Message): void => {
+const handleSendLatestBlock = (
+  ws: WebSocket,
+  message: SendLatestBlockMessage,
+): void => {
   const receivedLatestBlock: Block = message.content;
   logger.info(`Block with index ${receivedLatestBlock.index} received`);
 
@@ -105,12 +124,18 @@ const handleSendLatestBlock = (ws: WebSocket, message: Message): void => {
   }
 };
 
-const handleSendMempool = (ws: WebSocket, message: Message): void => {
+const handleSendMempool = (
+  ws: WebSocket,
+  message: SendMempoolMessage,
+): void => {
   const receivedMempool: Mempool = message.content;
   receivedMempool.transactions.forEach(maybeAddTransactionToMempool);
 };
 
-const handleSendTransaction = (ws: WebSocket, message: Message): void => {
+const handleSendTransaction = (
+  ws: WebSocket,
+  message: SendTransactionMessage,
+): void => {
   const transaction: Transaction = message.content;
   logger.info(`Transaction with id ${transaction.id} received`);
 
@@ -120,7 +145,10 @@ const handleSendTransaction = (ws: WebSocket, message: Message): void => {
 const maybeAddTransactionToMempool = (transaction: Transaction): void =>
   tryOrLogError(() => addTransactionToMempool(transaction));
 
-const handleSendPeers = (ws: WebSocket, message: Message): void => {
+const handleSendPeerUrls = (
+  ws: WebSocket,
+  message: SendPeerUrlsMessage,
+): void => {
   const peerUrls: string[] = message.content;
   peerUrls.forEach(connectToPeer);
 };

@@ -7,11 +7,11 @@ export type Peer = {
   /**
    * An UUID identifying the peer.
    */
-  id: string;
+  readonly id: string;
   isAlive: boolean;
   socket: WebSocket;
   /**
    * The url that other peers can connect to.
    */
-  url: string;
+  readonly url: string;
 };

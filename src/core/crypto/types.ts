@@ -1,6 +1,6 @@
 export type KeyPair = {
-  privateKey: PrivateKey;
-  publicKey: PublicKey;
+  readonly privateKey: PrivateKey;
+  readonly publicKey: PublicKey;
 };
 
 export type PrivateKey = string;
