@@ -8,7 +8,7 @@ import {
 import { Block, FindBlockArgs, Nonce } from './types';
 
 /**
- * Finds and returns a `Block` with a hash that
+ * Finds and returns a block with a hash that
  * passes the difficulty.
  */
 export const findBlock = ({
@@ -34,7 +34,17 @@ export const findBlock = ({
     const hash = sha256(hashableBlockContent);
 
     if (hashMatchesDifficulty(hash, difficulty)) {
-      return { index, nonce, data, prevHash, hash, timestamp, difficulty };
+      const foundBlock: Block = {
+        index,
+        nonce,
+        data,
+        prevHash,
+        hash,
+        timestamp,
+        difficulty,
+      };
+
+      return foundBlock;
     }
   }
 };

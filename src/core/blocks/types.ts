@@ -27,7 +27,7 @@ export type Block = {
 
 export type BlockData = {
   readonly coinbaseTransaction: CoinbaseTransaction;
-  readonly transactions: Transaction[];
+  readonly transactions: ReadonlyArray<Transaction>;
 };
 
 /**

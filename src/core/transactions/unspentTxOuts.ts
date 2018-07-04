@@ -15,7 +15,7 @@ export const getUnspentTxOuts = (): UnspentTxOut[] => unspentTxOuts;
 
 export const updateUnspentTxOuts = (
   coinbaseTransaction: CoinbaseTransaction,
-  transactions: Transaction[],
+  transactions: ReadonlyArray<Transaction>,
 ): UnspentTxOut[] => {
   const updatedUnspentTxOuts = getUpdatedUnspentTxOuts(
     coinbaseTransaction,
@@ -28,7 +28,7 @@ export const updateUnspentTxOuts = (
 
 const getUpdatedUnspentTxOuts = (
   coinbaseTransaction: CoinbaseTransaction,
-  transactions: Transaction[],
+  transactions: ReadonlyArray<Transaction>,
   oldUnspentTxOuts: UnspentTxOut[],
 ): UnspentTxOut[] => {
   const newUnspentTxOuts = getNewUnspentTxOuts(
@@ -45,7 +45,7 @@ const getUpdatedUnspentTxOuts = (
 
 const getNewUnspentTxOuts = (
   coinbaseTransaction: CoinbaseTransaction,
-  transactions: Transaction[],
+  transactions: ReadonlyArray<Transaction>,
 ): UnspentTxOut[] => {
   const unspentTxOutFromCoinbaseTransaction =
     coinbaseTransaction &&
@@ -73,7 +73,7 @@ const getUnspentTxOutFromCoinbaseTransaction = (
 });
 
 const getUnspentTxOutsFromTransactions = (
-  transactions: Transaction[],
+  transactions: ReadonlyArray<Transaction>,
 ): UnspentTxOut[] => transactions.flatMap(mapTransactionToUnspentTxOuts);
 
 const mapTransactionToUnspentTxOuts = (
@@ -93,7 +93,9 @@ const mapTxOutToUnspentTxOut = (transaction: Transaction) => (
   amount: txOut.amount,
 });
 
-const getNewSpentOutPoints = (transactions: Transaction[]): OutPoint[] =>
+const getNewSpentOutPoints = (
+  transactions: ReadonlyArray<Transaction>,
+): OutPoint[] =>
   transactions
     .flatMap(transaction => transaction.txIns)
     .map(txIn => txIn.prevOutPoint);

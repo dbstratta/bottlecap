@@ -29,7 +29,7 @@ export const addTransactionToMempool = (transaction: Transaction): Mempool => {
 };
 
 export const updateMempool = (
-  confirmedTransactions: Transaction[],
+  confirmedTransactions: ReadonlyArray<Transaction>,
 ): Mempool => {
   const mempool = getMempool();
   const spentOutPoints: OutPoint[] = getSpentOutPoints(confirmedTransactions);
@@ -48,7 +48,9 @@ export const updateMempool = (
   return newMempool;
 };
 
-const getSpentOutPoints = (transactions: Transaction[]): OutPoint[] =>
+const getSpentOutPoints = (
+  transactions: ReadonlyArray<Transaction>,
+): OutPoint[] =>
   transactions
     .flatMap(transaction => transaction.txIns)
     .map(txIn => txIn.prevOutPoint);
