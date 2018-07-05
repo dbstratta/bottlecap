@@ -91,7 +91,9 @@
     "typescript": "^2.9.2"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.0.0-beta.51",
     "apollo-server": "^2.0.0-rc.5",
+    "core-js": "3.0.0-beta.3",
     "elliptic": "^6.4.0",
     "graphql": "^0.13.2",
     "mkdirp": "^0.5.1",

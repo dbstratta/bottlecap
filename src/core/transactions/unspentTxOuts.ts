@@ -100,7 +100,9 @@ const getNewSpentOutPoints = (
     .flatMap(transaction => transaction.txIns)
     .map(txIn => txIn.prevOutPoint);
 
-const setUnspentTxOuts = (newUnspentTxOuts: UnspentTxOut[]): UnspentTxOut[] => {
+export const setUnspentTxOuts = (
+  newUnspentTxOuts: UnspentTxOut[],
+): UnspentTxOut[] => {
   unspentTxOuts = newUnspentTxOuts;
   return unspentTxOuts;
 };

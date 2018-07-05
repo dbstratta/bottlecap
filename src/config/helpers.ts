@@ -22,7 +22,7 @@ export const getEnvOrThrow = (
   return castValue(value, options.valueType);
 };
 
-const castValue = (
+export const castValue = (
   value: string,
   type: ValueType = 'string',
 ): string | number | boolean => {

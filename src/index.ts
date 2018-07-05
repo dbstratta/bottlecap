@@ -1,3 +1,5 @@
+import 'core-js/features/array/flat-map';
+
 import './config/config';
 import { initializeNode } from './core';
 import logger from './core/logger';

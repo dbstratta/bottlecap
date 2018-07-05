@@ -1,4 +1,4 @@
-const getIgnore = (env) => {
+const getIgnoreOption = (env) => {
   const base = ['node_modules'];
 
   if (env === 'production') {
@@ -11,6 +11,9 @@ const getIgnore = (env) => {
 module.exports = (api) => {
   const babelEnv = api.env();
 
+  const debug = !!process.env.DEBUG;
+  const useBuiltIns = false;
+
   const presets = [
     [
       '@babel/preset-env',
@@ -18,7 +21,8 @@ module.exports = (api) => {
         targets: {
           node: 'current',
         },
-        debug: babelEnv === 'development',
+        debug,
+        useBuiltIns,
       },
     ],
     '@babel/preset-typescript',
@@ -26,7 +30,7 @@ module.exports = (api) => {
 
   const plugins = ['@babel/plugin-proposal-optional-catch-binding'];
 
-  const ignore = getIgnore(babelEnv);
+  const ignore = getIgnoreOption(babelEnv);
 
   return {
     presets,
