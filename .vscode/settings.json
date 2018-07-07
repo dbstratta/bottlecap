@@ -12,7 +12,17 @@
     "**/.git/objects/**": true,
     "**/.git/subtree-cache/**": true,
     "**/node_modules/**": true,
+    "**/node_data/**": true,
     "**/dist/**": true
   },
-  "prettier.eslintIntegration": false
+  "prettier.eslintIntegration": false,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/dist": true,
+    "**/node_data": true
+  }
 }

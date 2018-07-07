@@ -70,6 +70,7 @@
     "babel-core": "^7.0.0-0",
     "babel-eslint": "^8.2.5",
     "babel-jest": "^23.2.0",
+    "babel-plugin-dynamic-import-node": "^2.0.0",
     "codecov": "^3.0.2",
     "eslint": "^5.0.1",
     "eslint-config-airbnb-base": "^13.0.0",

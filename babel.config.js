@@ -28,7 +28,7 @@ module.exports = (api) => {
     '@babel/preset-typescript',
   ];
 
-  const plugins = ['@babel/plugin-proposal-optional-catch-binding'];
+  const plugins = ['@babel/plugin-proposal-optional-catch-binding', 'dynamic-import-node'];
 
   const ignore = getIgnoreOption(babelEnv);
 

@@ -1,6 +1,15 @@
+import { equals } from 'ramda';
+
+import { PublicKey } from '../crypto';
 import { COINBASE_AMOUNT } from './constants';
 import { getCoinbaseTransactionId } from './helpers';
-import { CoinbaseTransaction, Transaction, TxOut, UnspentTxOut } from './types';
+import {
+  CoinbaseTransaction,
+  Transaction,
+  TxIn,
+  TxOut,
+  UnspentTxOut,
+} from './types';
 import {
   getUnspentTxOuts,
   setUnspentTxOuts,
@@ -8,7 +17,7 @@ import {
 } from './unspentTxOuts';
 
 describe('updateUnspentTxOuts', () => {
-  beforeEach(() => restoreUnspentTxOuts());
+  afterEach(() => restoreUnspentTxOuts());
 
   test(`adds the newly unspent transaction output
   when only given a coinbase transaction`, () => {
@@ -36,6 +45,43 @@ describe('updateUnspentTxOuts', () => {
     ];
 
     expect(updatedUnspentTxOuts).toEqual(expectedUnspentTxOuts);
+  });
+
+  test('removes the genesis unspent transaction out when spent', () => {
+    const unspentTxOuts = getUnspentTxOuts();
+    const genesisCoinbaseTransaction = unspentTxOuts[0];
+    const genesisCoinbaseTransactionOutPoint =
+      genesisCoinbaseTransaction.outPoint;
+
+    const address: PublicKey = 'test_address';
+    const coinbaseTransaction = generateCoinbaseTransaction(1, address);
+
+    const txIn: TxIn = {
+      prevOutPoint: genesisCoinbaseTransactionOutPoint,
+      signature: 'test_signature',
+    };
+    const txOut: TxOut = {
+      address: genesisCoinbaseTransaction.address,
+      amount: genesisCoinbaseTransaction.amount,
+    };
+    const transaction: Transaction = {
+      id: 'test_transaction',
+      txIns: [txIn],
+      txOuts: [txOut],
+    };
+    const transactions: ReadonlyArray<Transaction> = [transaction];
+
+    const updatedUnspentTxOuts = updateUnspentTxOuts(
+      coinbaseTransaction,
+      transactions,
+    );
+
+    const isGenesisUnspentTxOutInUnspentTxOuts = !!updatedUnspentTxOuts.find(
+      unspentTxOut =>
+        equals(unspentTxOut.outPoint, genesisCoinbaseTransactionOutPoint),
+    );
+
+    expect(isGenesisUnspentTxOutInUnspentTxOuts).toEqual(false);
   });
 });
 

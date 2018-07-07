@@ -8,7 +8,9 @@
 
 import { getEnvOrThrow } from './helpers';
 
-const logLevel = getEnvOrThrow('LOG_LEVEL') as string;
+const logLevel = getEnvOrThrow('LOG_LEVEL', {
+  defaultValue: 'info',
+}) as string;
 
 const persistencePath = getEnvOrThrow('PERSISTENCE_PATH', {
   defaultValue: 'node_data',
@@ -16,14 +18,17 @@ const persistencePath = getEnvOrThrow('PERSISTENCE_PATH', {
 
 const graphQLServerPort = getEnvOrThrow('GRAPHQL_SERVER_PORT', {
   defaultValue: 4000,
+  valueType: 'number',
 }) as number;
-
-const p2pNodeUrl = getEnvOrThrow('P2P_NODE_URL') as string;
 
 const p2pServerPort = getEnvOrThrow('P2P_SERVER_PORT', {
   defaultValue: 4100,
   valueType: 'number',
 }) as number;
+
+const p2pNodeUrl = getEnvOrThrow('P2P_NODE_URL', {
+  defaultValue: `ws://localhost:${p2pServerPort}`,
+}) as string;
 
 export const env = {
   logLevel,
