@@ -1,5 +1,8 @@
 {
-  "automerge": "minor",
+  "automerge": true,
+  "major": {
+    "automerge": false
+  },
   "semanticCommits": true,
   "labels": ["renovate"],
   "assignees": ["@strattadb"],
