@@ -1,0 +1,19 @@
+# Dependencies
+node_modules
+
+# Testing
+coverage
+
+# Production
+dist
+
+# Misc
+website
+docs
+node_data
+.env
+*.pyc
+.DS_Store
+.idea
+*.sw*
+*.log*

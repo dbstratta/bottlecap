@@ -39,6 +39,9 @@ import {
   ServerInfo,
 } from './types';
 
+/**
+ * Handles messages sent by peers in the network.
+ */
 export const handleMessage = (ws: WebSocket, data: string): void => {
   const message: Message | null = parseMessage(data);
 
@@ -61,15 +64,15 @@ export const handleMessage = (ws: WebSocket, data: string): void => {
   } else if (message.type === MessageType.SendServerInfo) {
     handleSendServerInfo(ws, message);
   } else if (message.type === MessageType.SendActiveBlockchain) {
-    handleSendActiveBlockchain(ws, message);
+    handleSendActiveBlockchain(message);
   } else if (message.type === MessageType.SendLatestBlock) {
     handleSendLatestBlock(ws, message);
   } else if (message.type === MessageType.SendMempool) {
-    handleSendMempool(ws, message);
+    handleSendMempool(message);
   } else if (message.type === MessageType.SendTransaction) {
-    handleSendTransaction(ws, message);
+    handleSendTransaction(message);
   } else if (message.type === MessageType.SendPeerUrls) {
-    handleSendPeerUrls(ws, message);
+    handleSendPeerUrls(message);
   }
 };
 
@@ -97,7 +100,6 @@ const handleSendServerInfo = (
 };
 
 const handleSendActiveBlockchain = (
-  ws: WebSocket,
   message: SendActiveBlockchainMessage,
 ): void => {
   const receivedActiveBlockchain: Blockchain = message.content;
@@ -124,18 +126,12 @@ const handleSendLatestBlock = (
   }
 };
 
-const handleSendMempool = (
-  ws: WebSocket,
-  message: SendMempoolMessage,
-): void => {
+const handleSendMempool = (message: SendMempoolMessage): void => {
   const receivedMempool: Mempool = message.content;
   receivedMempool.transactions.forEach(maybeAddTransactionToMempool);
 };
 
-const handleSendTransaction = (
-  ws: WebSocket,
-  message: SendTransactionMessage,
-): void => {
+const handleSendTransaction = (message: SendTransactionMessage): void => {
   const transaction: Transaction = message.content;
   logger.info(`Transaction with id ${transaction.id} received`);
 
@@ -145,10 +141,7 @@ const handleSendTransaction = (
 const maybeAddTransactionToMempool = (transaction: Transaction): void =>
   tryOrLogError(() => addTransactionToMempool(transaction));
 
-const handleSendPeerUrls = (
-  ws: WebSocket,
-  message: SendPeerUrlsMessage,
-): void => {
+const handleSendPeerUrls = (message: SendPeerUrlsMessage): void => {
   const peerUrls: string[] = message.content;
   peerUrls.forEach(connectToPeer);
 };
