@@ -72,6 +72,7 @@
     "babel-jest": "^23.2.0",
     "babel-plugin-dynamic-import-node": "^2.0.0",
     "codecov": "^3.0.2",
+    "danger": "^3.7.20",
     "eslint": "^5.0.1",
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-config-prettier": "^2.9.0",
