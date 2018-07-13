@@ -1,7 +1,7 @@
 {
   "name": "bottlecap",
   "description": "A decentralized cryptocurrency",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "dist/index.js",
   "scripts": {
     "start:dev": "nodemon --exec babel-node --extensions \".ts,.tsx\" src/index.ts",
@@ -49,12 +49,12 @@
   "license": "MIT",
   "private": false,
   "devDependencies": {
-    "@babel/cli": "7.0.0-beta.51",
-    "@babel/core": "7.0.0-beta.51",
-    "@babel/node": "7.0.0-beta.51",
-    "@babel/plugin-proposal-optional-catch-binding": "7.0.0-beta.51",
-    "@babel/preset-env": "7.0.0-beta.51",
-    "@babel/preset-typescript": "7.0.0-beta.51",
+    "@babel/cli": "7.0.0-beta.53",
+    "@babel/core": "7.0.0-beta.53",
+    "@babel/node": "7.0.0-beta.53",
+    "@babel/plugin-proposal-optional-catch-binding": "7.0.0-beta.53",
+    "@babel/preset-env": "7.0.0-beta.53",
+    "@babel/preset-typescript": "7.0.0-beta.53",
     "@commitlint/cli": "7.0.0",
     "@commitlint/config-conventional": "7.0.1",
     "@commitlint/prompt-cli": "7.0.0",
