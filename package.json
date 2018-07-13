@@ -1,7 +1,7 @@
 {
   "name": "bottlecap",
   "description": "A decentralized cryptocurrency",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "dist/index.js",
   "scripts": {
     "start:dev": "nodemon --exec babel-node --extensions \".ts,.tsx\" src/index.ts",
@@ -71,7 +71,7 @@
     "babel-eslint": "8.2.6",
     "babel-jest": "23.2.0",
     "babel-plugin-dynamic-import-node": "2.0.0",
-    "codecov": "3.0.2",
+    "codecov": "3.0.4",
     "danger": "3.7.20",
     "eslint": "5.0.1",
     "eslint-config-airbnb-base": "13.0.0",
