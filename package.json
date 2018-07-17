@@ -1,7 +1,7 @@
 {
   "name": "bottlecap",
   "description": "A decentralized cryptocurrency",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "main": "dist/index.js",
   "scripts": {
     "start:dev": "nodemon --exec babel-node --extensions \".ts,.tsx\" src/index.ts",
@@ -94,7 +94,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0-beta.51",
-    "apollo-server": "^2.0.0-rc.5",
+    "apollo-server": "^2.1.0-alpha",
     "core-js": "3.0.0-beta.3",
     "elliptic": "^6.4.0",
     "graphql": "^0.13.2",
