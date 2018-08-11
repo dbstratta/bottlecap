@@ -1,7 +1,7 @@
 {
   "name": "bottlecap",
   "description": "A decentralized cryptocurrency",
-  "version": "1.0.47",
+  "version": "1.0.48",
   "main": "dist/index.js",
   "scripts": {
     "start:dev": "nodemon --exec babel-node --extensions \".ts,.tsx\" src/index.ts",
@@ -79,7 +79,7 @@
     "eslint-plugin-import": "2.13.0",
     "eslint-plugin-prettier": "2.6.2",
     "husky": "1.0.0-rc.13",
-    "jest": "23.4.2",
+    "jest": "23.5.0",
     "lint-staged": "7.2.0",
     "markdownlint-cli": "0.12.0",
     "nodemon": "1.18.3",
