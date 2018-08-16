@@ -1,4 +1,4 @@
-FROM node:10.8.0@sha256:8062236dc2ee065a98af95eec74d5928d065194eb0ab8fffabdbc5cfaac2137a AS builder
+FROM node:10.9.0@sha256:576446f0ea880126f39392c492ff449a8cf3903530ac57a3a1d84494a6cc2a64 AS builder
 ENV NODE_ENV=${NODE_ENV:-production}
 WORKDIR /usr/src/app
 COPY package.json yarn.lock ./
@@ -8,7 +8,7 @@ RUN yarn build
 
 # ---
 
-FROM node:10.8.0-alpine@sha256:962dc023d8598778df81a1a52719bd4ed7f341661742330bfdc72ca8241e58d6
+FROM node:10.9.0-alpine@sha256:e9a83aa3e7ea576b93a21195f2e318ef8075ceccbebaa8f6c333294e9aa51dbd
 LABEL maintainer="strattadb@gmail.com"
 ENV NODE_ENV=${NODE_ENV:-production}
 WORKDIR /usr/src/app
