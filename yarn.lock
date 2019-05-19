@@ -885,9 +885,9 @@
     node-fetch "^2.1.1"
     url-template "^2.0.8"
 
-"@playlyfe/gql@2.6.0":
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/@playlyfe/gql/-/gql-2.6.0.tgz#1245afb27363eac40a18f5d800afd26432231fbe"
+"@playlyfe/gql@2.6.1":
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/@playlyfe/gql/-/gql-2.6.1.tgz#2032eb70e3e13d057107347706d4dc8b7edd4fae"
   dependencies:
     apollo-codegen "0.10.13"
     babel-runtime "6.23.0"
@@ -902,7 +902,7 @@
     json5 "0.5.1"
     keymirror "0.1.1"
     leven "2.1.0"
-    lodash "4.17.4"
+    lodash "4.17.11"
     minimatch "3.0.4"
     node-ipc "9.0.1"
     parse-glob "3.0.4"
@@ -5053,9 +5053,9 @@ lodash.upperfirst@4.3.1:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/lodash.upperfirst/-/lodash.upperfirst-4.3.1.tgz#1365edf431480481ef0d1c68957a5ed99d49f7ce"
 
-lodash@4.17.4:
-  version "4.17.4"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
+lodash@4.17.11:
+  version "4.17.11"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
 
 lodash@^3.3.1:
   version "3.10.1"

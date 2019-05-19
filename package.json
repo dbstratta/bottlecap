@@ -1,7 +1,7 @@
 {
   "name": "bottlecap",
   "description": "A decentralized cryptocurrency",
-  "version": "1.0.64",
+  "version": "1.0.65",
   "main": "dist/index.js",
   "scripts": {
     "start:dev": "nodemon --exec babel-node --extensions \".ts,.tsx\" src/index.ts",
@@ -59,7 +59,7 @@
     "@commitlint/config-conventional": "7.0.1",
     "@commitlint/prompt-cli": "7.0.0",
     "@commitlint/travis-cli": "7.0.0",
-    "@playlyfe/gql": "2.6.0",
+    "@playlyfe/gql": "2.6.1",
     "@types/graphql": "0.13.4",
     "@types/jest": "23.3.1",
     "@types/mkdirp": "0.5.2",
