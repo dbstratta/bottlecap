@@ -1,4 +1,4 @@
-FROM node:10.9.0@sha256:576446f0ea880126f39392c492ff449a8cf3903530ac57a3a1d84494a6cc2a64 AS builder
+FROM node:10.9.0@sha256:f4d7627cb875f90ab6cccd66fc65dd3d419506b968b2d6341baf73592e3efee8 AS builder
 ENV NODE_ENV=${NODE_ENV:-production}
 WORKDIR /usr/src/app
 COPY package.json yarn.lock ./
