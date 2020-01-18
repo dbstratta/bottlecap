@@ -1,7 +1,7 @@
 {
   "name": "bottlecap",
   "description": "A decentralized cryptocurrency",
-  "version": "1.0.64",
+  "version": "1.0.65",
   "main": "dist/index.js",
   "scripts": {
     "start:dev": "nodemon --exec babel-node --extensions \".ts,.tsx\" src/index.ts",
@@ -55,10 +55,10 @@
     "@babel/plugin-proposal-optional-catch-binding": "7.0.0-rc.2",
     "@babel/preset-env": "7.0.0-rc.2",
     "@babel/preset-typescript": "7.0.0-rc.2",
-    "@commitlint/cli": "7.0.0",
-    "@commitlint/config-conventional": "7.0.1",
-    "@commitlint/prompt-cli": "7.0.0",
-    "@commitlint/travis-cli": "7.0.0",
+    "@commitlint/cli": "8.3.5",
+    "@commitlint/config-conventional": "8.3.4",
+    "@commitlint/prompt-cli": "8.3.5",
+    "@commitlint/travis-cli": "8.3.5",
     "@playlyfe/gql": "2.6.0",
     "@types/graphql": "0.13.4",
     "@types/jest": "23.3.1",
