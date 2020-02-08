@@ -1,7 +1,7 @@
 {
   "name": "bottlecap",
   "description": "A decentralized cryptocurrency",
-  "version": "1.0.64",
+  "version": "1.0.65",
   "main": "dist/index.js",
   "scripts": {
     "start:dev": "nodemon --exec babel-node --extensions \".ts,.tsx\" src/index.ts",
@@ -64,7 +64,7 @@
     "@types/jest": "23.3.1",
     "@types/mkdirp": "0.5.2",
     "@types/node": "10.9.1",
-    "@types/ramda": "0.25.36",
+    "@types/ramda": "0.26.41",
     "@types/uuid": "3.4.3",
     "@types/ws": "6.0.0",
     "babel-core": "7.0.0-bridge.0",
@@ -99,7 +99,7 @@
     "elliptic": "^6.4.0",
     "graphql": "^0.13.2",
     "mkdirp": "^0.5.1",
-    "ramda": "^0.25.0",
+    "ramda": "^0.27.0",
     "uuid": "^3.3.2",
     "winston": "^3.0.0",
     "ws": "^6.0.0"
