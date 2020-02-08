@@ -1061,11 +1061,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/ws@6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-6.0.0.tgz#4787c4194c29cc6361208dcf4e580e208794e012"
+"@types/ws@6.0.4":
+  version "6.0.4"
+  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-6.0.4.tgz#7797707c8acce8f76d8c34b370d4645b70421ff1"
   dependencies:
-    "@types/events" "*"
     "@types/node" "*"
 
 "@types/ws@^5.1.2":
